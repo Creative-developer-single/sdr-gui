@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React可拖动模块选择器Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            background-color: #e0e8f0; /* 稍微深一点的背景，突出工作区和浮动窗口 */
+            overflow: hidden; /* 防止拖动时页面出现滚动条 */
+        }
+        /* 自定义滚动条样式 (可选) */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a1a1a1;
+        }
+        .param-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* 调整最小宽度以适应更小的窗口 */
+            gap: 0.75rem; /* 12px */
+        }
+        .draggable-window-header {
+            cursor: grab;
+        }
+        .draggable-window-header:active {
+            cursor: grabbing;
+        }
+        /* 确保模块选择器内部滚动正常 */
+        .module-selector-internal-scroll {
+            max-height: calc(100% - 4rem); /* 减去头部和可能的底部空间 */
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // --- 模拟模块数据 (与之前相同) ---
+        const initialModuleData = {
+            "信源模块": [
+                {
+                    id: "src_sine",
+                    name: "正弦波信号源",
+                    preview: {
+                        image: "https://placehold.co/180x100/DBEAFE/1E40AF?text=正弦波&font=noto-sans-sc",
+                        title: "信号源",
+                        subtitle: "波形: 正弦",
+                    },
+                    parameters: {
+                        fixed: [ { name: "数据流模式", value: "连续" }, { name: "接口数", value: "1" },],
+                        variable: [ { name: "采样率", value: "1k", unit: "Sps", type: "number" }, { name: "频率", value: "100", unit: "Hz", type: "number" }, { name: "幅度", value: "1", unit: "V", type: "number" },],
+                    },
+                },
+                {
+                    id: "src_gaussian",
+                    name: "高斯白噪声源",
+                    preview: {
+                        image: "https://placehold.co/180x100/DBEAFE/1E40AF?text=高斯噪声&font=noto-sans-sc",
+                        title: "噪声源",
+                        subtitle: "类型: 高斯",
+                    },
+                    parameters: {
+                        fixed: [ { name: "数据类型", value: "浮点型" },],
+                        variable: [ { name: "采样率", value: "2k", unit: "Sps", type: "number" }, { name: "幅度", value: "0.5", type: "number" }, { name: "种子", value: "0", unit:"(0随机)", type: "number" },],
+                    },
+                },
+            ],
+            "信号处理": [
+                {
+                    id: "proc_fir",
+                    name: "FIR滤波器",
+                    preview: {
+                        image: "https://placehold.co/180x100/D1FAE5/065F46?text=FIR&font=noto-sans-sc",
+                        title: "滤波器",
+                        subtitle: "类型: FIR",
+                    },
+                    parameters: {
+                        fixed: [ { name: "实现方式", value: "直接型" },],
+                        variable: [ { name: "抽头系数", value: "0.1,0.2,0.4,0.2,0.1", type: "text" }, { name: "抽取因子", value: "1", type: "number" },],
+                    },
+                },
+                 {
+                    id: "proc_fft",
+                    name: "FFT",
+                    preview: {
+                        image: "https://placehold.co/180x100/D1FAE5/065F46?text=FFT&font=noto-sans-sc",
+                        title: "频谱分析",
+                        subtitle: "算法: FFT",
+                    },
+                    parameters: {
+                        fixed: [ { name: "窗函数", value: "汉宁窗" },],
+                        variable: [ { name: "FFT点数", value: "1024", type: "select", options: ["512", "1024", "2048"] }, { name: "归一化", value: "是", type: "select", options: ["是", "否"] },],
+                    },
+                }
+            ],
+        };
+        const moduleCategories = Object.keys(initialModuleData);
+
+        window.onload = () => {
+            const { useState, useEffect, useCallback, useRef } = React;
+
+            // --- 可拖动窗口组件 ---
+            function DraggableWindow({ title, children, initialPosition = { x: 50, y: 50 }, windowSize = { width: '850px', height: '600px' }, onClose }) {
+                const [position, setPosition] = useState(initialPosition);
+                const [isDragging, setIsDragging] = useState(false);
+                const [dragStartOffset, setDragStartOffset] = useState({ x: 0, y: 0 });
+                const windowRef = useRef(null);
+
+                const handleMouseDown = useCallback((e) => {
+                    if (windowRef.current && e.target.classList.contains('draggable-window-header')) {
+                        setIsDragging(true);
+                        const rect = windowRef.current.getBoundingClientRect();
+                        setDragStartOffset({
+                            x: e.clientX - rect.left,
+                            y: e.clientY - rect.top,
+                        });
+                        e.preventDefault(); // 防止文本选择等默认行为
+                    }
+                }, []);
+
+                const handleMouseMove = useCallback((e) => {
+                    if (isDragging) {
+                        let newX = e.clientX - dragStartOffset.x;
+                        let newY = e.clientY - dragStartOffset.y;
+
+                        // 边界检测 (可选, 防止窗口拖出屏幕)
+                        const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+                        const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+                        if (windowRef.current) {
+                           const rect = windowRef.current.getBoundingClientRect();
+                           newX = Math.max(0, Math.min(newX, vw - rect.width));
+                           newY = Math.max(0, Math.min(newY, vh - rect.height));
+                        }
+
+                        setPosition({ x: newX, y: newY });
+                    }
+                }, [isDragging, dragStartOffset]);
+
+                const handleMouseUp = useCallback(() => {
+                    setIsDragging(false);
+                }, []);
+
+                useEffect(() => {
+                    if (isDragging) {
+                        document.addEventListener('mousemove', handleMouseMove);
+                        document.addEventListener('mouseup', handleMouseUp);
+                    } else {
+                        document.removeEventListener('mousemove', handleMouseMove);
+                        document.removeEventListener('mouseup', handleMouseUp);
+                    }
+                    return () => {
+                        document.removeEventListener('mousemove', handleMouseMove);
+                        document.removeEventListener('mouseup', handleMouseUp);
+                    };
+                }, [isDragging, handleMouseMove, handleMouseUp]);
+
+                return (
+                    <div
+                        ref={windowRef}
+                        className="fixed bg-white rounded-lg shadow-2xl flex flex-col overflow-hidden border border-gray-300"
+                        style={{
+                            left: `${position.x}px`,
+                            top: `${position.y}px`,
+                            width: windowSize.width,
+                            height: windowSize.height,
+                            zIndex: 1000, // 确保在顶层
+                            minWidth: '400px', // 最小宽度
+                            minHeight: '300px', // 最小高度
+                        }}
+                        onMouseDown={handleMouseDown} // 监听整个窗口的 mousedown，但在 handler 中判断是否点击在 header 上
+                    >
+                        <div className="draggable-window-header bg-slate-700 text-white p-3 flex justify-between items-center select-none">
+                            <h2 className="text-lg font-semibold">{title}</h2>
+                            {onClose && (
+                                <button 
+                                    onClick={onClose} 
+                                    className="text-slate-300 hover:text-white transition-colors"
+                                    title="关闭窗口"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            )}
+                        </div>
+                        <div className="flex-grow overflow-auto"> {/* 内容区域可滚动 */}
+                            {children}
+                        </div>
+                    </div>
+                );
+            }
+
+
+            // --- 模块选择器子组件 (与之前类似，略作调整以适应窗口) ---
+            function ListItem({ text, isSelected, onClick, title }) {
+                return ( <li title={title || text} className={`p-2.5 text-sm rounded-md cursor-pointer transition-all duration-150 ease-in-out mb-1.5 truncate ${isSelected ? 'bg-sky-600 text-white shadow-md transform scale-102' : 'bg-white hover:bg-sky-50 text-gray-700 hover:text-sky-700 shadow hover:shadow-sm'}`} onClick={onClick}> {text} </li> );
+            }
+
+            function ParameterItem({ name, value, unit, type = 'text', options = [], onChange, id }) {
+                const inputId = `param-${id}-${name.replace(/\s+/g, '-')}`;
+                return ( <div className="bg-white p-2.5 rounded-md shadow-sm border border-gray-200"> <label htmlFor={inputId} className="block text-xs font-medium text-gray-500 mb-1">{name}{unit && ` (${unit})`}</label> {type === 'select' ? ( <select id={inputId} value={value} onChange={onChange} className="w-full p-1.5 text-sm text-gray-700 border border-gray-300 rounded-md focus:ring-1 focus:ring-sky-500 focus:border-sky-500 transition-shadow"> {options.map(opt => <option key={opt} value={opt}>{opt}</option>)} </select> ) : type === 'number' ? ( <input id={inputId} type="number" value={value} onChange={onChange} className="w-full p-1.5 text-sm text-gray-700 border border-gray-300 rounded-md focus:ring-1 focus:ring-sky-500 focus:border-sky-500 transition-shadow" /> ) : ( <input id={inputId} type="text" value={value} onChange={onChange} className="w-full p-1.5 text-sm text-gray-700 border border-gray-300 rounded-md focus:ring-1 focus:ring-sky-500 focus:border-sky-500 transition-shadow" /> )} </div> );
+            }
+
+            function ModuleSelectorCore() { // 重命名，避免与外层ModuleSelector冲突
+                const [selectedCategory, setSelectedCategory] = useState(moduleCategories[0] || null);
+                const [modulesForCategory, setModulesForCategory] = useState([]);
+                const [selectedModule, setSelectedModule] = useState(null);
+                const [currentParameters, setCurrentParameters] = useState({ fixed: [], variable: [] });
+
+                useEffect(() => {
+                    if (selectedCategory) {
+                        const modules = initialModuleData[selectedCategory] || [];
+                        setModulesForCategory(modules);
+                        if (modules.length > 0) { handleModuleSelect(modules[0]); } 
+                        else { setSelectedModule(null); setCurrentParameters({ fixed: [], variable: [] });}
+                    }
+                }, [selectedCategory]);
+                
+                useEffect(() => {
+                    if (moduleCategories.length > 0 && initialModuleData[moduleCategories[0]]?.length > 0) {
+                        const firstCategory = moduleCategories[0];
+                        const firstModule = initialModuleData[firstCategory][0];
+                        setSelectedCategory(firstCategory);
+                        handleModuleSelect(firstModule); 
+                    }
+                }, []);
+
+                const handleCategorySelect = useCallback((category) => { setSelectedCategory(category); }, []);
+                const handleModuleSelect = useCallback((module) => { setSelectedModule(module); setCurrentParameters(module && module.parameters ? JSON.parse(JSON.stringify(module.parameters)) : { fixed: [], variable: [] }); }, []);
+                const handleParameterChange = (paramType, paramName, newValue) => { setCurrentParameters(prevParams => { const updatedTypeParams = prevParams[paramType].map(p => p.name === paramName ? { ...p, value: newValue } : p); return { ...prevParams, [paramType]: updatedTypeParams }; }); };
+
+                const renderParameterGroup = (params, type) => ( params && params.length > 0 ? ( <div className="param-grid"> {params.map((param, index) => ( <ParameterItem key={`${type}-${index}-${param.name}`} id={`${type}-${index}`} {...param} onChange={(e) => handleParameterChange(type, param.name, e.target.value)} /> ))} </div> ) : <p className="text-xs text-gray-400 italic">无此类参数。</p> );
+
+                return (
+                    <div className="h-full flex flex-col bg-slate-100"> {/* 确保填满DraggableWindow的内容区 */}
+                        {/* 移除顶层标题，由DraggableWindow提供 */}
+                        <div className="flex-grow flex flex-col md:flex-row gap-3 p-3 module-selector-internal-scroll overflow-auto">
+                            <div className="md:w-2/5 lg:w-1/3 flex flex-col gap-3">
+                                <div className="bg-slate-50 p-3 rounded-md shadow-sm flex-auto flex flex-col">
+                                    <h3 className="text-base font-semibold text-gray-700 mb-2 border-b pb-1.5">模块分类</h3>
+                                    <ul className="space-y-1 overflow-y-auto flex-grow pr-0.5"> {moduleCategories.map(category => ( <ListItem key={category} text={category} isSelected={selectedCategory === category} onClick={() => handleCategorySelect(category)} /> ))} </ul>
+                                </div>
+                                <div className="bg-slate-50 p-3 rounded-md shadow-sm flex-auto flex flex-col">
+                                    <h3 className="text-base font-semibold text-gray-700 mb-2 border-b pb-1.5">可选模块</h3>
+                                    {selectedCategory && modulesForCategory.length > 0 ? ( <ul className="space-y-1 overflow-y-auto flex-grow pr-0.5"> {modulesForCategory.map(module => ( <ListItem key={module.id} text={module.name} isSelected={selectedModule?.id === module.id} onClick={() => handleModuleSelect(module)} /> ))} </ul> ) : ( <p className="text-xs text-gray-400 italic pt-1">请先选择分类或此分类下无模块。</p> )}
+                                </div>
+                            </div>
+                            <div className="md:w-3/5 lg:w-2/3 flex-grow bg-slate-50 p-3 rounded-md shadow-sm overflow-y-auto">
+                                {selectedModule ? (
+                                    <div className="space-y-4">
+                                        <div>
+                                            <h3 className="text-base font-semibold text-gray-700 mb-2 border-b pb-1.5">模块预览</h3>
+                                            <div className="bg-white p-3 rounded-md shadow-sm flex flex-col sm:flex-row items-center gap-3 border border-gray-200">
+                                                <img src={selectedModule.preview.image} alt={`${selectedModule.name} 预览`} className="w-full sm:w-40 h-auto object-contain rounded border" onError={(e) => { e.target.src = 'https://placehold.co/180x100/CCCCCC/FFFFFF?text=图片错误&font=noto-sans-sc'; }} />
+                                                <div className="text-center sm:text-left">
+                                                    <h4 className="text-md font-bold text-sky-700">{selectedModule.preview.title}</h4>
+                                                    <p className="text-xs text-gray-600">{selectedModule.name}</p>
+                                                    <p className="text-xs text-gray-500 mt-0.5">{selectedModule.preview.subtitle}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h3 className="text-base font-semibold text-gray-700 mb-2.5 border-b pb-1.5">配置参数</h3>
+                                            <div className="space-y-3.5">
+                                                <div> <h4 className="text-sm font-semibold text-gray-600 mb-1.5">固定参数</h4> {renderParameterGroup(currentParameters.fixed, 'fixed')} </div>
+                                                <div> <h4 className="text-sm font-semibold text-gray-600 mb-1.5">可变参数</h4> {renderParameterGroup(currentParameters.variable, 'variable')} </div>
+                                            </div>
+                                        </div>
+                                        <div className="mt-5 pt-3 border-t border-gray-200 flex justify-end">
+                                            <button className="px-4 py-2 bg-sky-600 text-white text-sm font-semibold rounded-md shadow-sm hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-opacity-50 transition-transform transform hover:scale-105 active:scale-95" onClick={() => alert(`模块 "${selectedModule.name}" 已配置！`)}> 应用配置 (Demo) </button>
+                                        </div>
+                                    </div>
+                                ) : ( <div className="flex flex-col items-center justify-center h-full text-center"> <svg className="w-12 h-12 text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg> <p className="text-md text-gray-400 font-semibold">请选择一个模块</p> <p className="text-xs text-gray-400">选择左侧的分类和模块以查看详情。</p> </div> )}
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            // --- 根组件 ---
+            function App() {
+                const [isSelectorVisible, setIsSelectorVisible] = useState(true);
+
+                const toggleSelectorVisibility = () => {
+                    setIsSelectorVisible(prev => !prev);
+                };
+                
+                return (
+                    <React.StrictMode>
+                        {/* 模拟主工作区内容 */}
+                        <div className="w-full h-screen p-8">
+                            <header className="mb-8">
+                                <h1 className="text-3xl font-bold text-slate-800">我的主工作区</h1>
+                                <p className="text-slate-600">这里是您应用的主要内容区域。</p>
+                                <button 
+                                    onClick={toggleSelectorVisibility}
+                                    className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition"
+                                >
+                                    {isSelectorVisible ? "隐藏模块选择器" : "显示模块选择器"}
+                                </button>
+                            </header>
+                            <div className="bg-white p-6 rounded-lg shadow-xl h-3/4">
+                                <p className="text-slate-700">主工作区内容示例...</p>
+                                <p className="mt-4 text-sm text-slate-500">模块选择器窗口可以拖动，并且会保持在最顶层。</p>
+                            </div>
+                        </div>
+
+                        {isSelectorVisible && (
+                            <DraggableWindow 
+                                title="选择并配置模块"
+                                initialPosition={{ x: window.innerWidth - 870, y: 60 }} // 调整初始位置
+                                windowSize={{width: '850px', height: 'calc(100vh - 120px)'}} // 调整大小
+                                onClose={toggleSelectorVisibility} // 添加关闭功能
+                            >
+                                <ModuleSelectorCore />
+                            </DraggableWindow>
+                        )}
+                    </React.StrictMode>
+                );
+            }
+
+            const rootElement = document.getElementById('root');
+            if (rootElement) {
+                if (typeof ReactDOM !== 'undefined' && typeof ReactDOM.createRoot === 'function') {
+                    const root = ReactDOM.createRoot(rootElement);
+                    root.render(<App />);
+                } else {
+                    console.error("ReactDOM或者ReactDOM.createRoot未定义。请检查React DOM脚本是否正确加载。");
+                }
+            } else {
+                console.error("未能找到ID为 'root' 的根元素。");
+            }
+        };
+    </script>
+</body>
+</html>

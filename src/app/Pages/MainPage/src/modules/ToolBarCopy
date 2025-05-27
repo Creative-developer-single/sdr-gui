@@ -1,0 +1,65 @@
+import {menuItemsConfig} from './Menu';
+
+
+const toolbarsConfig = {
+    file: [
+        { id: 'newProject', label: '新建工程', icon: '➕', action: () => console.log('新建工程 Clicked') },
+        { id: 'openProject', label: '打开工程', icon: '📂', action: () => console.log('打开工程 Clicked') },
+        { id: 'saveProject', label: '保存工程', icon: '💾', action: () => console.log('保存工程 Clicked') },
+    ],
+    start: [
+        { id: 'analogMode', label: '模拟模式', icon: '〰️', action: () => console.log('模拟模式 Clicked') },
+        { id: 'digitalMode', label: '数字模式', icon: '🔢', action: () => console.log('数字模式 Clicked') },
+        { id: 'validateFlow', label: '验证流图', icon: '✔️', action: () => console.log('验证流图 Clicked') },
+        { id: 'startSim', label: '开始仿真', icon: '▶️', action: () => console.log('开始仿真 Clicked') },
+        { id: 'genReport', label: '生成报告', icon: '📄', action: () => console.log('生成报告 Clicked') },
+        { id: 'exportData', label: '导出数据', icon: '📤', action: () => console.log('导出数据 Clicked') },
+    ],
+    modules: [
+        { id: 'addBlock', label: '添加模块', icon: '🧱', action: () => console.log('添加模块 Clicked') },
+        { id: 'connectBlocks', label: '连接模块', icon: '🔗', action: () => console.log('连接模块 Clicked') },
+    ],
+    simulate: [
+        { id: 'runSim', label: '运行仿真', icon: '🚀', action: () => console.log('运行仿真 Clicked') },
+        { id: 'stopSim', label: '停止仿真', icon: '🛑', action: () => console.log('停止仿真 Clicked') },
+        { id: 'simSettings', label: '仿真设置', icon: '⚙️', action: () => console.log('仿真设置 Clicked') },
+    ],
+    hardware: [
+        { id: 'detectHw', label: '检测硬件', icon: '📡', action: () => console.log('检测硬件 Clicked') },
+        { id: 'hwConfig', label: '硬件配置', icon: '🛠️', action: () => console.log('硬件配置 Clicked') },
+    ],
+    help: [
+        { id: 'viewHelp', label: '查看帮助', icon: '❓', action: () => console.log('查看帮助 Clicked') },
+        { id: 'aboutApp', label: '关于应用', icon: 'ℹ️', action: () => console.log('关于应用 Clicked') },
+    ],
+};
+
+// ## 工具栏组件 (Toolbar)
+function Toolbar({ activeMenuId }) {
+    const currentToolbarItems = toolbarsConfig[activeMenuId] || [];
+    const activeMenuLabel = menuItemsConfig.find(m => m.id === activeMenuId)?.label || activeMenuId;
+
+    return (
+        <div className="bg-gray-100 px-3 py-2 border-b border-gray-300 shadow-sm flex items-center space-x-2 flex-wrap flex-shrink-0 min-h-[60px]">
+            {currentToolbarItems.length === 0 ? (
+                <p className="text-xs text-gray-500 italic">
+                    “{activeMenuLabel}”菜单下暂无工具项。
+                </p>
+            ) : (
+                currentToolbarItems.map(item => (
+                    <button
+                        key={item.id}
+                        className="flex flex-col items-center justify-center p-1.5 rounded-md hover:bg-gray-200 active:bg-gray-300 min-w-[70px]"
+                        title={item.label}
+                        onClick={item.action}
+                    >
+                        <span className="toolbar-icon-text text-gray-600">{item.icon}</span>
+                        <span className="text-xs text-gray-700 mt-0.5">{item.label}</span>
+                    </button>
+                ))
+            )}
+        </div>
+    );
+}
+
+export default Toolbar;
