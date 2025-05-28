@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLogicGraph } from "../LogicGraphProvider/LogicGraphProvider";
+import { useLogicGraph } from "../../LogicGraphProvider/LogicGraphProvider";
 import { LogicGraphNode } from "./LogicGraphNode";
 
 export function LogicGraphNodeTest() {

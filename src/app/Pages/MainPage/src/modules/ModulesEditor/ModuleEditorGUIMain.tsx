@@ -227,9 +227,11 @@ function ModuleEditorGUIMain( { windowId } ){
                     </div>
                     <div className="flex w-full flex-row justify-between px-30 mt-5 mb-5">
                         <button className="bg-red-500 border-gray-400 rounded-md shadow-md font-semibold text-white 
-                        hover:bg-red-600 active:bg-red-800 mx-2 px-4 py-1">放弃</button>
+                        hover:bg-red-600 active:bg-red-800 mx-2 px-4 py-1" onClick={()=>{actions.removeGUI(windowId)}}>放弃</button>
                         <button className="bg-sky-600 border-gray-400 rounded-md shadow-md font-semibold text-white 
-                        hover:bg-sky-700 active:bg-sky-800 mx-2 px-4 py-1">应用配置</button>
+                        hover:bg-sky-700 active:bg-sky-800 mx-2 px-4 py-1" onClick={()=>{
+                            console.log("当前模块数据：", currentModule);
+                        }}>应用配置</button>
                 </div>
                 </div>
                 

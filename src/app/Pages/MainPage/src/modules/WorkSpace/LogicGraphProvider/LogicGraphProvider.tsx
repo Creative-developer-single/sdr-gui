@@ -15,10 +15,19 @@ export const useLogicGraph = () => {
 
 export function LogicGraphProvider( {children} ){
     // 定义节点和边状态
+    const [EditorProps,setEditorProps] = useState<LogicGraphProviderInterface["Editor"]>({
+        isOpen:false
+    });
     const [Nodes,setNodes] = useState<LogicGraphProviderInterface["Nodes"]>([]);
     const [Edges,setEdges] = useState<LogicGraphProviderInterface["Edges"]>([]);
 
     // 定义操作函数
+
+    // GUI操作
+    const openLogicGraph = useCallback(()=>{
+        setEditorProps(prevProps => ({ ...prevProps, isOpen: true }));
+    },[]);
+
     // 添加节点
     const addNode = useCallback((node:LogicGraphNodesProp) => {
         if (Nodes.length == 0){
@@ -61,9 +70,11 @@ export function LogicGraphProvider( {children} ){
     }
 
     const contextValue = {
+        Editor:EditorProps,
         Nodes:Nodes,
         Edges:Edges,
         Actions: {
+            openLogicGraph: openLogicGraph,
             addNode: addNode,
             removeNode: removeNode,
             updateNode: updateNode,

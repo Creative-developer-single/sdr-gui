@@ -1,9 +1,9 @@
 import { use, useEffect, useState } from "react";
-import { FloatWindowPropInterface, UpdateStatusInterface } from "../../FloatWindow/FloatWindowPropInterface";
-import { LogicGraphNodesProp } from "../LogicGraphProvider/LogicGraphProviderInterface";
-import { useLogicGraph } from "../LogicGraphProvider/LogicGraphProvider";
-import { FloatWindowWithoutTitle } from "../../FloatWindow/FloatWindowWithoutTitle";
-import { ModulesListAlias } from "../../ModulesLib/ModulesList";
+import { FloatWindowPropInterface, UpdateStatusInterface } from "../../../FloatWindow/FloatWindowPropInterface";
+import { LogicGraphNodesProp } from "../../LogicGraphProvider/LogicGraphProviderInterface";
+import { useLogicGraph } from "../../LogicGraphProvider/LogicGraphProvider";
+import { FloatWindowWithoutTitle } from "../../../FloatWindow/FloatWindowWithoutTitle";
+import { ModulesListAlias } from "../../../ModulesLib/ModulesList";
 
 export function LogicGraphNode( { nodeID } ){
     const { Nodes,Actions } = useLogicGraph();

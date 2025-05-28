@@ -34,6 +34,7 @@ export interface LogicGraphEdgesProp{
 }
 
 interface LogicGraphActions{
+    openLogicGraph: () => void;
     addNode: (node: LogicGraphNodesProp) => void;
     removeNode: (nodeID: number) => void;
     updateNode: (nodeID: number, updates: Partial<LogicGraphNodesProp>) => void;
@@ -42,7 +43,12 @@ interface LogicGraphActions{
     updateEdge: (edgeID: number, updates: Partial<LogicGraphEdgesProp>) => void;
 }
 
+interface EditorProps{
+    isOpen: boolean;
+}
+
 export interface LogicGraphProviderInterface {
+    Editor:EditorProps;
     Nodes: LogicGraphNodesProp[];
     Edges: LogicGraphEdgesProp[];
     Actions: LogicGraphActions;

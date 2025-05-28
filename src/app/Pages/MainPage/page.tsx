@@ -10,9 +10,9 @@ import { FloatWindowPropInterface,UpdateStatusInterface } from './src/modules/Fl
 import { title } from 'process';
 import ModuleBrouserEditor from './src/modules/ModulesEditor/ModuleEditorGUI';
 import { ModulesEditorProvider } from './src/modules/ModulesEditor/ModulesEditorProvider';
-import { LogicGraphNode } from './src/modules/WorkSpace/LogicGraphEditor/LogicGraphNode';
+import { LogicGraphNode } from './src/modules/WorkSpace/LogicGraphEditor/LogicGraphNode/LogicGraphNode';
 import { LogicGraphProvider } from './src/modules/WorkSpace/LogicGraphProvider/LogicGraphProvider';
-import { LogicGraphNodeTest } from './src/modules/WorkSpace/LogicGraphEditor/LogicGraphNodeTest';
+import { LogicGraphNodeTest } from './src/modules/WorkSpace/LogicGraphEditor/LogicGraphNode/LogicGraphNodeTest';
 import { LogicGraphGUI } from './src/modules/WorkSpace/LogicGraphEditor/LogicGraphEditorGUI';
 
 // ## 工作区组件 (Workspace)
@@ -80,7 +80,7 @@ function App() {
                 </ModulesEditorProvider>
                 <div className="flex flex-grow overflow-hidden">
                     <Sidebar />
-                    <LogicGraphGUI isOpen={false}></LogicGraphGUI>
+                    <LogicGraphGUI></LogicGraphGUI>
                 </div>
                 <LogicGraphNodeTest></LogicGraphNodeTest>
             </LogicGraphProvider>

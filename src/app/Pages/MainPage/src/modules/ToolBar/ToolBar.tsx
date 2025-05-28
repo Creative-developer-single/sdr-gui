@@ -21,11 +21,24 @@ function Toolbar({ activeMenuId ,onStart }) {
     const currentToolbarItems = toolbarsConfig[activeMenuId] || [];
     const activeMenuLabel = menuItemsConfig.find(m => m.id === activeMenuId)?.label || activeMenuId;
     
-    const { modulesData,actions } = useModulesEditor();
-    const { Nodes,Actions} = useLogicGraph();
+    // 获取 ModulesEditor 上下文
+    const ModulesEditorContext = useModulesEditor();
+    const EditorModulesData = ModulesEditorContext.modulesData || [];
+    const EditorActions = ModulesEditorContext.actions || {};
+
+    // 获取 LogicGraph 上下文
+    const LogicGraphContext = useLogicGraph();
+    const LogicGraphNodes = LogicGraphContext.Nodes || [];
+    const LogicGraphActions = LogicGraphContext.Actions || {};
+
+    // 组装上下文对象，便于Controller访问
+    const SharedContext = {
+        ModulesEditor:ModulesEditorContext,
+        LogicGraph:LogicGraphContext,
+    }
 
     function createTestWindow(){
-        actions.openEditorGUI(
+        EditorActions.openEditorGUI(
             {
                 windowId:0,
                 windowMode:'ModulesBrouser',
@@ -37,9 +50,9 @@ function Toolbar({ activeMenuId ,onStart }) {
     }
 
     function createTestNode(){
-        Actions.addNode(
+        LogicGraphActions.addNode(
             {
-                ID: Math.max(...Nodes.map(n => n.ID)) + 1,
+                ID: Math.max(...LogicGraphNodes.map(n => n.ID)) + 1,
                 Pos: { X: 100, Y: 100 },
                 BlockLength: 100,
                 InputCount:1,
@@ -81,8 +94,8 @@ function Toolbar({ activeMenuId ,onStart }) {
                                     onClick={()=>{item.action;
                                         //onStart();
                                         console.log('打开窗口');
-                                        //createTestWindow();
-                                        ToolBarController(activeMenuId,item,actions);
+                                        //createTestNode();
+                                        ToolBarController(activeMenuId,item,SharedContext);
                                     }}
                                 >
                                     <img src={item.iconSrc} width='40px' height='40px' className='align-middle w-5px h-5px'></img>

@@ -2,9 +2,9 @@ export const toolbarsConfig = {
     file: [
         {
             item:[
-                { id: 'newProject', label: '新建工程', iconSrc: '../imgs/createProject.png', action: () => console.log('新建工程 Clicked') },
-                { id: 'openProject', label: '打开工程', iconSrc: '../imgs/openProject.png', action: () => console.log('打开工程 Clicked') },
-                { id: 'saveProject', label: '保存工程', iconSrc: '../imgs/quickSave.png', action: () => console.log('保存工程 Clicked') },
+                { id: 'NewProject', label: '新建工程', iconSrc: '../imgs/createProject.png', action: () => console.log('新建工程 Clicked') },
+                { id: 'OpenProject', label: '打开工程', iconSrc: '../imgs/openProject.png', action: () => console.log('打开工程 Clicked') },
+                { id: 'SaveProject', label: '保存工程', iconSrc: '../imgs/quickSave.png', action: () => console.log('保存工程 Clicked') },
             ],
             id:'fileManagement',
             label:'工程管理',
