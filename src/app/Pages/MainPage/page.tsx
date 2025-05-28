@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import './src/css/index.css'; // 确保引入了 Tailwind CSS
 import MenuBar from './src/modules/Menu';
-import Toolbar from './src/modules/ToolBar';
+import Toolbar from './src/modules/ToolBar/ToolBar';
 import Sidebar from './src/modules/SideBar';
 import FloatWindow from './src/modules/FloatWindow/FloatWindow';
 import { FloatWindowPropInterface,UpdateStatusInterface } from './src/modules/FloatWindow/FloatWindowPropInterface';
@@ -13,6 +13,7 @@ import { ModulesEditorProvider } from './src/modules/ModulesEditor/ModulesEditor
 import { LogicGraphNode } from './src/modules/WorkSpace/LogicGraphEditor/LogicGraphNode';
 import { LogicGraphProvider } from './src/modules/WorkSpace/LogicGraphProvider/LogicGraphProvider';
 import { LogicGraphNodeTest } from './src/modules/WorkSpace/LogicGraphEditor/LogicGraphNodeTest';
+import { LogicGraphGUI } from './src/modules/WorkSpace/LogicGraphEditor/LogicGraphEditorGUI';
 
 // ## 工作区组件 (Workspace)
 function Workspace() {
@@ -79,7 +80,7 @@ function App() {
                 </ModulesEditorProvider>
                 <div className="flex flex-grow overflow-hidden">
                     <Sidebar />
-                    <Workspace />
+                    <LogicGraphGUI isOpen={false}></LogicGraphGUI>
                 </div>
                 <LogicGraphNodeTest></LogicGraphNodeTest>
             </LogicGraphProvider>

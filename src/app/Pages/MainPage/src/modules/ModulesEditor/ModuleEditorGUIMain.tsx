@@ -85,15 +85,14 @@ function ModuleEditorGUIMain( { windowId } ){
                                 key={group.GroupName}
                                 className={` 
                                             flex-grow
-                                            min-w-0
-                                            min-h-0
                                           border-gray-300 
                                             rounded-sm
                                             font-semibold
                                             shadow-md
                                             px-2
                                             py-1
-                                            m-2
+                                            mx-2
+                                            my-1
                                             ${group.GroupName === activeType ? 'bg-sky-600 text-white' : 'bg-white text-blue-950 hover:bg-sky-50'
                                             }`}
                                             onClick={() => handleModuleClick("ModuleType", group.GroupName)}
@@ -116,7 +115,6 @@ function ModuleEditorGUIMain( { windowId } ){
                                         key={module.Name}
                                         className={` border-gray-300 
                                                     rounded-sm
-                                                    flex-grow
                                                     min-w-0
                                                     font-semibold
                                                     shadow-md

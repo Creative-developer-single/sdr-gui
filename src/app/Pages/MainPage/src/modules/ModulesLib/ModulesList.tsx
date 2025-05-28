@@ -1,112 +1,19 @@
 /*
     说明：本文件定义了目前版本下的模块列表清单，供模块管理器调用
 */
-//分类 -> 模块名
-export const ModulesList = [{
-        GroupName:'Default',
-        Modules:[{
-            Name:'defaultModule',
-            Description:'这是一个默认模块',
-            Properties:{
-                Fixed:{
-                    ProcessMode:'block',
-                    BlockLength:1024,
-                    InputCount:1,
-                    OutputCount:1,
-                    ComponentType:"default.defaultModule",
-                },
-                Global:{
-                    SampleRate:10000,
-                },
-                Local:{
-                    ComponentID:'default0',
-                    mode:'default'
-                }
-            }
-        },
-        {
-            Name:'defaultModule2',
-            Description:'这是一个默认模块',
-            Properties:{
-                Fixed:{
-                    ProcessMode:'block',
-                    BlockLength:1024,
-                    InputCount:2,
-                    OutputCount:1,
-                    ComponentType:"default.defaultModule",
-                },
-                Global:{
-                    SampleRate:10000,
-                },
-                Local:{
-                    ComponentID:'default0',
-                    mode:'default'
-                }
-            }
-        },
-        {
-            Name:'defaultModule3',
-            Description:'这是一个默认模块',
-            Properties:{
-                Fixed:{
-                    ProcessMode:'block',
-                    BlockLength:1024,
-                    InputCount:1,
-                    OutputCount:1,
-                    ComponentType:"default.defaultModule",
-                },
-                Global:{
-                    SampleRate:10000,
-                },
-                Local:{
-                    ComponentID:'default0',
-                    mode:'default'
-                }
-            }
-        },
-        {
-            Name:'defaultModule4',
-            Description:'这是一个默认模块',
-            Properties:{
-                Fixed:{
-                    ProcessMode:'block',
-                    BlockLength:1024,
-                    InputCount:1,
-                    OutputCount:1,
-                    ComponentType:"default.defaultModule",
-                },
-                Global:{
-                    SampleRate:10000,
-                },
-                Local:{
-                    ComponentID:'default0',
-                    mode:'default'
-                }
-            }
-        },
-        {
-            Name:'defaultModule5',
-            Description:'这是一个默认模块',
-            Properties:{
-                Fixed:{
-                    ProcessMode:'block',
-                    BlockLength:1024,
-                    InputCount:1,
-                    OutputCount:1,
-                    ComponentType:"default.defaultModule",
-                },
-                Global:{
-                    SampleRate:10000,
-                },
-                Local:{
-                    ComponentID:'default0',
-                    mode:'default'
-                }
-            }
-        }]
-}
-];
 
+import { ArithmeticModules } from "./Group/Arithmetic/ArithmeticModules"
+import { DefaultModules } from "./Group/Default/DefaultModules"
+import { ReceiveSourceModules } from "./Group/ReceiveSource/ReceiveSourceModules"
+import { SendSourceModules } from "./Group/SendSource/SendSourceModules"
+
+//分类 -> 模块名
+export const ModulesList = [
+    { GroupName: 'Default', Modules: DefaultModules.Modules},
+    { GroupName: 'SendSource',Modules: SendSourceModules.Modules},
+    { GroupName: 'ReceiveSource',Modules: ReceiveSourceModules.Modules},
+    { GroupName: 'Arithmetic', Modules: ArithmeticModules.Modules},
+]
 export const ModulesListAlias = {
     // 固定属性
     ProcessMode:'处理模式',
