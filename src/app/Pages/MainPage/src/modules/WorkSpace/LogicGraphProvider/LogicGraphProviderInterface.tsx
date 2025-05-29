@@ -3,8 +3,28 @@ interface LogicGraphDynamicProps{
     [key: string]: any;
 }
 
-export interface LogicGraphBackgroundProps{
-    
+export interface VitrualSingleEdgeProp{
+    NodeID: number;
+    EdgeIndex: number;
+    Mode: string; // "StartPoint" | "TerminalPoint"
+}
+
+export interface VitrualEdgeProp{
+    StartNode:{
+        isNodeSet:boolean;
+        NodeID:number;
+        EdgeIndex:number;
+    }
+    EndNode:{
+        isNodeSet:boolean;
+        NodeID:number;
+        EdgeIndex:number;
+    };
+    Mode: string; // "StartPoint" | "TerminalPoint"
+}
+
+export interface LogicGraphNodePortProps{
+    PortIndex:number;
 }
 
 export interface LogicGraphNodesProp{
@@ -17,6 +37,10 @@ export interface LogicGraphNodesProp{
         IconSrc:String;
         Title:String;
         Type:String;
+    };
+    Ports:{
+        InputPort:LogicGraphNodePortProps[];
+        OutputPort:LogicGraphNodePortProps[];
     };
     BlockLength:number;
     InputCount:number;
@@ -38,6 +62,8 @@ interface LogicGraphActions{
     addNode: (node: LogicGraphNodesProp) => void;
     removeNode: (nodeID: number) => void;
     updateNode: (nodeID: number, updates: Partial<LogicGraphNodesProp>) => void;
+    addVirtualEdge: (mode:string,PortProp:VitrualSingleEdgeProp) => void;
+    clearVirtualEdge: () => void;
     addEdge: (edge: LogicGraphEdgesProp) => void;
     removeEdge: (edgeID: number) => void;
     updateEdge: (edgeID: number, updates: Partial<LogicGraphEdgesProp>) => void;
@@ -49,6 +75,7 @@ interface EditorProps{
 
 export interface LogicGraphProviderInterface {
     Editor:EditorProps;
+    VitrualEdges:VitrualEdgeProp;
     Nodes: LogicGraphNodesProp[];
     Edges: LogicGraphEdgesProp[];
     Actions: LogicGraphActions;

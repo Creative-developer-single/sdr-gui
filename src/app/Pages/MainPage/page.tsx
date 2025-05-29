@@ -14,6 +14,7 @@ import { LogicGraphNode } from './src/modules/WorkSpace/LogicGraphEditor/LogicGr
 import { LogicGraphProvider } from './src/modules/WorkSpace/LogicGraphProvider/LogicGraphProvider';
 import { LogicGraphNodeTest } from './src/modules/WorkSpace/LogicGraphEditor/LogicGraphNode/LogicGraphNodeTest';
 import { LogicGraphGUI } from './src/modules/WorkSpace/LogicGraphEditor/LogicGraphEditorGUI';
+import BezierAutoTest from './src/modules/WorkSpace/LogicGraphEditor/LogicGraphEdge/BezierAutoTest';
 
 // ## 工作区组件 (Workspace)
 function Workspace() {
@@ -82,7 +83,7 @@ function App() {
                     <Sidebar />
                     <LogicGraphGUI></LogicGraphGUI>
                 </div>
-                <LogicGraphNodeTest></LogicGraphNodeTest>
+                
             </LogicGraphProvider>
             
         </div>

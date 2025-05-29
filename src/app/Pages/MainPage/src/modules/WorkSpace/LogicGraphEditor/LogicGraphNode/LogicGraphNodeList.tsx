@@ -7,7 +7,7 @@ export function LogicGraphNodeList(){
 
     return (
         Nodes.map(node => (
-            <LogicGraphNode nodeID={node.ID}></LogicGraphNode>
+            <LogicGraphNode key={node.ID} nodeID={node.ID}></LogicGraphNode>
         ))
     )
 }

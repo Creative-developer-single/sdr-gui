@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useState } from "react";
-import { LogicGraphNodesProp, LogicGraphProviderInterface } from "./LogicGraphProviderInterface";
+import { LogicGraphNodePortProps, LogicGraphNodesProp, LogicGraphProviderInterface, VitrualSingleEdgeProp } from "./LogicGraphProviderInterface";
 
 // 创建Context对象
 const logicGraphContext = createContext<LogicGraphProviderInterface | null>(null);
@@ -19,6 +19,19 @@ export function LogicGraphProvider( {children} ){
         isOpen:false
     });
     const [Nodes,setNodes] = useState<LogicGraphProviderInterface["Nodes"]>([]);
+    const [VitrualEdges,setVitrualEdges] = useState<LogicGraphProviderInterface["VitrualEdges"]>({
+        StartNode: {
+            isNodeSet:false,
+            NodeID: 0,
+            EdgeIndex: 0
+        },
+        EndNode: {
+            isNodeSet:false,
+            NodeID: 0,
+            EdgeIndex: 0
+        },
+        Mode:"StartPoint" // 默认模式为起始点
+    });
     const [Edges,setEdges] = useState<LogicGraphProviderInterface["Edges"]>([]);
 
     // 定义操作函数
@@ -28,17 +41,40 @@ export function LogicGraphProvider( {children} ){
         setEditorProps(prevProps => ({ ...prevProps, isOpen: true }));
     },[]);
 
+    
+
     // 添加节点
-    const addNode = useCallback((node:LogicGraphNodesProp) => {
+    function addNode(node:LogicGraphNodesProp){
         if (Nodes.length == 0){
             node.ID = 1;
         }
+        else {
+            // 查找当前最大的ID号
+            const maxID = Math.max(...Nodes.map(n => n.ID));
+            node.ID = maxID + 1;
+        }
+
+
+        // 分配随机位置
+        node.Pos = {
+            X: Math.random() * 5000, // 假设画布宽度为800
+            Y: Math.random() * 5000  // 假设画布高度为600
+        };
+
+        console.log("添加节点", node);
+        console.log("当前节点列表", Nodes);
         setNodes(prevNodes => [...prevNodes,node]);
-        console.log('现有节点:', Nodes);
-    },[]);
+    }
 
     // 删除节点
     function removeNode(nodeID: number){
+        // 为了防止泄露，先删除节点的所有相关边
+        Edges.forEach(edge => {
+            if (edge.StartNodeID === nodeID || edge.EndNodeID === nodeID) {
+                removeEdge(edge.EdgeID);
+            }
+        });
+
         setNodes(prevNodes => prevNodes.filter(node => node.ID !== nodeID));
     }
 
@@ -50,8 +86,74 @@ export function LogicGraphProvider( {children} ){
     }
 
     // 定义边的操作函数
+    // 添加虚拟边
+    function addVirtualEdge(mode: string, EdgeProp:VitrualSingleEdgeProp) {
+        switch(mode){
+            case "StartPoint":
+                setVitrualEdges(prevEdges => ({
+                    ...prevEdges,
+                    StartNode: {
+                        isNodeSet: true,
+                        NodeID: EdgeProp.NodeID, // 假设PortIndex是节点ID
+                        EdgeIndex: 0 // 假设EdgeIndex为0
+                    },
+                    Mode: "StartPoint"
+                }));
+                break;
+            case "TerminalPoint":
+                setVitrualEdges(prevEdges => ({
+                    ...prevEdges,
+                    EndNode: {
+                        isNodeSet: true,
+                        NodeID: EdgeProp.NodeID, // 假设PortIndex是节点ID
+                        EdgeIndex: 0 // 假设EdgeIndex为0
+                    },
+                    Mode: "TerminalPoint"
+                }));
+
+                // 如果两个节点都设置了，则添加边
+                if (VitrualEdges.StartNode.isNodeSet && VitrualEdges.EndNode.isNodeSet) {
+                    const newEdge: LogicGraphProviderInterface["Edges"][number] = {
+                        EdgeID:0,
+                        StartNodeID: VitrualEdges.StartNode.NodeID,
+                        EndNodeID: VitrualEdges.EndNode.NodeID,
+                        StartEdgeIndex: VitrualEdges.StartNode.EdgeIndex,
+                        EndEdgeIndex: VitrualEdges.EndNode.EdgeIndex
+                    }
+
+                    addEdge(newEdge);
+                }
+                break;
+        }
+    }
+
+    function clearVirtualEdge() {
+        setVitrualEdges({
+            StartNode: {
+                isNodeSet: false,
+                NodeID: 0,
+                EdgeIndex: 0
+            },
+            EndNode: {
+                isNodeSet: false,
+                NodeID: 0,
+                EdgeIndex: 0
+            },
+            Mode: "StartPoint" // 重置模式为起始点
+        });
+    }
+
     // 添加边
     function addEdge(edge: LogicGraphProviderInterface["Edges"][number]){
+        // 确保边的ID唯一
+        if (Edges.length === 0) {
+            edge.EdgeID = 1;
+        } else {
+            // 查找当前最大的EdgeID号
+            const maxEdgeID = Math.max(...Edges.map(e => e.EdgeID));
+            edge.EdgeID = maxEdgeID + 1;
+        }
+        // 添加边到状态
         setEdges(prevEdges => [...prevEdges, edge]);
     }
 
@@ -71,6 +173,7 @@ export function LogicGraphProvider( {children} ){
 
     const contextValue = {
         Editor:EditorProps,
+        VitrualEdges:VitrualEdges,
         Nodes:Nodes,
         Edges:Edges,
         Actions: {
@@ -78,6 +181,8 @@ export function LogicGraphProvider( {children} ){
             addNode: addNode,
             removeNode: removeNode,
             updateNode: updateNode,
+            addVirtualEdge: addVirtualEdge,
+            clearVirtualEdge: clearVirtualEdge,
             addEdge: addEdge,
             removeEdge: removeEdge,
             updateEdge: updateEdge

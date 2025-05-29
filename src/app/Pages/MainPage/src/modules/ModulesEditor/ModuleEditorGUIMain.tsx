@@ -3,10 +3,17 @@ import { ModulesList,ModulesListAlias } from "../ModulesLib/ModulesList";
 import '../../css/index.css';
 import { useEffect, useState } from "react";
 import { ModulesData,ModulesDataProps } from "./ModulesEditorProviderInterface";
+import { useLogicGraph } from "../WorkSpace/LogicGraphProvider/LogicGraphProvider";
+import { LogicGraphNodesProp } from "../WorkSpace/LogicGraphProvider/LogicGraphProviderInterface";
 
 function ModuleEditorGUIMain( { windowId } ){
     // 获取模块编辑器的上下文
     const { modulesData,actions } = useModulesEditor();
+
+    //
+    const LogicGraphContext = useLogicGraph();
+    const LogicNodes = LogicGraphContext.Nodes;
+    const LogicGraphActions = LogicGraphContext.Actions;
 
     // 获取当前窗口数据
     const windowData = modulesData.find(window => window.guiProps.id === windowId);
@@ -231,6 +238,34 @@ function ModuleEditorGUIMain( { windowId } ){
                         <button className="bg-sky-600 border-gray-400 rounded-md shadow-md font-semibold text-white 
                         hover:bg-sky-700 active:bg-sky-800 mx-2 px-4 py-1" onClick={()=>{
                             console.log("当前模块数据：", currentModule);
+                            // 依据端口数量生成端口数组
+                            const InputPorts = Array.from({ length: currentModule.Properties.Fixed.InputCount }, (_, i) => ({PortIndex:i}));
+                            const OutputPorts = Array.from({ length: currentModule.Properties.Fixed.OutputCount }, (_, i) => ({PortIndex:i}));
+
+                            const newNode:LogicGraphNodesProp = {
+                                ID:0,
+                                Pos:{
+                                    X:0,
+                                    Y:0
+                                },
+                                guiProps:{
+                                    IconSrc:'../imgs/alu.png',
+                                    Title:currentModule.Name,
+                                    Type:currentModule.Name
+                                },
+                                Ports:{
+                                    InputPort: InputPorts,
+                                    OutputPort: OutputPorts
+                                },
+                                BlockLength:currentModule.Properties.Fixed.BlockLength,
+                                InputCount:currentModule.Properties.Fixed.InputCount,
+                                OutputCount:currentModule.Properties.Fixed.OutputCount,
+                                ComponentType:currentModule.Properties.Fixed.ComponentType,
+                                ComponentSetting:{
+                                    ...currentModule.Properties.Local
+                                }
+                            }
+                            LogicGraphActions.addNode(newNode);
                         }}>应用配置</button>
                 </div>
                 </div>
