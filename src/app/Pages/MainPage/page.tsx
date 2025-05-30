@@ -5,16 +5,11 @@ import './src/css/index.css'; // 确保引入了 Tailwind CSS
 import MenuBar from './src/modules/Menu';
 import Toolbar from './src/modules/ToolBar/ToolBar';
 import Sidebar from './src/modules/SideBar';
-import FloatWindow from './src/modules/FloatWindow/FloatWindow';
-import { FloatWindowPropInterface,UpdateStatusInterface } from './src/modules/FloatWindow/FloatWindowPropInterface';
-import { title } from 'process';
+import { UpdateStatusInterface } from './src/modules/FloatWindow/FloatWindowPropInterface';
 import ModuleBrouserEditor from './src/modules/ModulesEditor/ModuleEditorGUI';
 import { ModulesEditorProvider } from './src/modules/ModulesEditor/ModulesEditorProvider';
-import { LogicGraphNode } from './src/modules/WorkSpace/LogicGraphEditor/LogicGraphNode/LogicGraphNode';
 import { LogicGraphProvider } from './src/modules/WorkSpace/LogicGraphProvider/LogicGraphProvider';
-import { LogicGraphNodeTest } from './src/modules/WorkSpace/LogicGraphEditor/LogicGraphNode/LogicGraphNodeTest';
 import { LogicGraphGUI } from './src/modules/WorkSpace/LogicGraphEditor/LogicGraphEditorGUI';
-import BezierAutoTest from './src/modules/WorkSpace/LogicGraphEditor/LogicGraphEdge/BezierAutoTest';
 import { WebSocketProvider } from './src/modules/WebBridge/WebSocket/WebSocketProvider';
 import { WebControllerProvider } from './src/modules/WebBridge/WebController';
 

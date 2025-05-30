@@ -15,7 +15,7 @@ function FloatWindow({
     const [isDragging, setIsDragging] = useState(false);
     const [dragStartOffset, setDragStartOffset] = useState({ x: 0, y: 0 });
 
-    const [updateStatusData, setUpdateStatusData] = useState({id,isOpen, width, height, posX, posY});
+    const [UpDataStatusData, setUpdateStatusData] = useState({id,isOpen, width, height, posX, posY});
 
     const windowRef = useRef<HTMLDivElement>(null);
 
@@ -41,8 +41,8 @@ function FloatWindow({
         if (!isDragging) return;
         if (!windowRef.current) return;
 
-        let newPosX = e.clientX - dragStartOffset.x;
-        let newPosY = e.clientY - dragStartOffset.y;
+        const newPosX = e.clientX - dragStartOffset.x;
+        const newPosY = e.clientY - dragStartOffset.y;
 
         setPosition({ x: newPosX, y: newPosY });
     }, [isDragging, dragStartOffset,position.x, position.y]);

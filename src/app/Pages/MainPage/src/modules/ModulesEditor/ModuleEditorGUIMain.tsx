@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { ModulesData,ModulesDataProps } from "./ModulesEditorProviderInterface";
 import { useLogicGraph } from "../WorkSpace/LogicGraphProvider/LogicGraphProvider";
 import { LogicGraphNodesProp } from "../WorkSpace/LogicGraphProvider/LogicGraphProviderInterface";
+import { LogicGraphShownNode } from "../WorkSpace/LogicGraphEditor/LogicGraphNode/LogicGraphNode";
 
 function ModuleEditorGUIMain( { windowId } ){
     // 获取模块编辑器的上下文
@@ -68,6 +69,14 @@ function ModuleEditorGUIMain( { windowId } ){
     function handleModuleClick(type,params){
         if( type === "ModuleType"){
             setActiveType(params);
+            
+            // 默认选中该分类下的第一个模块
+            const firstModule = ModulesList.find(group => group.GroupName === params)?.Modules[0];
+            if (firstModule) {
+                setActiveName(firstModule.Name);
+                // 更新当前模块数据
+                setCurrentModuleData(firstModule);
+            }
         }else if( type === "ModuleName"){
             setActiveName(params);
             // 更新当前模块数据
@@ -148,13 +157,16 @@ function ModuleEditorGUIMain( { windowId } ){
          */}
         <div className="basis-3/5 h-full flex flex-col bg-slate-100">
             {/*组件1：构建模块预览系统*/}
-            <div className="h-2/5 w-full flex-initial p-2">
+            <div className="h-3/5 w-full flex-initial p-2">
                 <div className="h-full w-full flex flex-col bg-slate-50 rounded-md shadow-lg">
                     <h3 className="font-semibold border-b-1 border-gray-400 py-2 mx-2">模块预览图</h3>
+                    <div className="flex flex-col bg-slate-100 items-center px-8 py-8 overflow-auto">
+                    <LogicGraphShownNode groupName={activeType} ModuleName={activeName} refModuleData={currentModule}></LogicGraphShownNode>
+                    </div>
                 </div>
             </div>
             {/*组件2：构建模块参数配置列表*/}
-            <div className="h-3/5 w-full flex-initial p-2">
+            <div className="h-2/5 w-full flex-initial p-2">
                 <div className="h-full w-full flex flex-col space-between bg-slate-50 rounded-md shadow-lg overflow-auto">
                     <h3 className="font-semibold border-b-1 border-gray-400 py-2 mx-2">参数配置</h3>
                     <div id="fixedParameterContainer" className="flex flex-col w-full">
