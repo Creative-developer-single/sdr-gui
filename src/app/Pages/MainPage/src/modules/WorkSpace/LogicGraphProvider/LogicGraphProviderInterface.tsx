@@ -46,7 +46,8 @@ export interface LogicGraphNodesProp{
     InputCount:number;
     OutputCount:number;
     ComponentType:string;
-    ComponentSetting?: LogicGraphDynamicProps;
+    ComponentID:string;
+    ComponentSettings?: LogicGraphDynamicProps;
 }   
 
 export interface LogicGraphEdgesProp{
@@ -67,10 +68,17 @@ interface LogicGraphActions{
     addEdge: (edge: LogicGraphEdgesProp) => void;
     removeEdge: (edgeID: number) => void;
     updateEdge: (edgeID: number, updates: Partial<LogicGraphEdgesProp>) => void;
+    getLogicGraphData: () => LogicGraphDataInterface;
 }
 
 interface EditorProps{
     isOpen: boolean;
+}
+
+export interface LogicGraphDataInterface {
+    Nodes: LogicGraphNodesProp[];
+    Edges: LogicGraphEdgesProp[];
+    VitrualEdges: VitrualEdgeProp;
 }
 
 export interface LogicGraphProviderInterface {

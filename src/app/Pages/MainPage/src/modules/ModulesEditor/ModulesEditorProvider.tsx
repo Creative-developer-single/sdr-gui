@@ -38,6 +38,7 @@ export function ModulesEditorProvider({ children }) {
                         InputCount:1,
                         OutputCount:1,
                         ComponentType:"default.defaultModule",
+                        ComponentID:'default0'
                     },
                     Global:{
                         SampleRate:10000,
@@ -69,7 +70,8 @@ export function ModulesEditorProvider({ children }) {
                 properties: {
                     fixed: {
                         processMode: 'block',
-                        blockLength: 1024
+                        blockLength: 1024,
+                        ComponentID: 'default0',
                     },
                     global: {
                         sampleRate: 10000,

@@ -6,6 +6,7 @@ import { ArithmeticModules } from "./Group/Arithmetic/ArithmeticModules"
 import { DefaultModules } from "./Group/Default/DefaultModules"
 import { ReceiveSourceModules } from "./Group/ReceiveSource/ReceiveSourceModules"
 import { SendSourceModules } from "./Group/SendSource/SendSourceModules"
+import { DataBufferModules } from "./Group/Others/DataBuffer/DataBuffers"
 
 //分类 -> 模块名
 export const ModulesList = [
@@ -13,6 +14,7 @@ export const ModulesList = [
     { GroupName: 'SendSource',Modules: SendSourceModules.Modules},
     { GroupName: 'ReceiveSource',Modules: ReceiveSourceModules.Modules},
     { GroupName: 'Arithmetic', Modules: ArithmeticModules.Modules},
+    { GroupName: 'DataBuffer', Modules: DataBufferModules.Modules},
 ]
 export const ModulesListAlias = {
     // 固定属性
@@ -29,8 +31,11 @@ export const ModulesListAlias = {
     ComponentID:'组件ID',
     mode:'模式',
 
-    // 特有属性
     trigger:'触发',
+    signalType:'信号类型',
     frequency:'频率',
-    phase:'相位',
+    amplitude:'幅度',
+    blockPhase:'相位',
+
+    bufferLength:'缓冲区长度',
 }

@@ -1,22 +1,26 @@
  export const SendSourceModules = {
   "Modules": [
     {
-      "Name": "testModule",
-      "Description": "这是一个测试模块",
+      "Name": "SignalGenerator",
+      "Description": "多波形发生器",
       "Properties": {
         "Fixed": {
           "ProcessMode": "block",
-          "BlockLength": 512,
+          "BlockLength": 1024,
           "InputCount": 1,
           "OutputCount": 1,
-          "ComponentType": "test.testModule"
+          "ComponentID": "Sin1",
+          "ComponentType": "Source.SignalGenerator"
         },
         "Global": {
-          "SampleRate": 48000
+          "SampleRate": 48000,
         },
         "Local": {
-          "ComponentID": "test0",
-          "mode": "test"
+          "ComponentID": "Sin1",
+          "signalType": "Sine",
+          "frequency": 1000,
+          "amplitude": 1,
+          "blockPhase": 0
         }
       }
     }

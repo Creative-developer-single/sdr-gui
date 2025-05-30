@@ -9,6 +9,7 @@ export const ArithmeticModules = {
             "BlockLength": 1024,
             "InputCount": 2,
             "OutputCount": 1,
+            "ComponentID": "default0",
             "ComponentType": "Arthmetic.basicALU"
           },
           "Global": {
@@ -28,6 +29,7 @@ export const ArithmeticModules = {
             "BlockLength": 1024,
             "InputCount": 1,
             "OutputCount": 1,
+            "ComponentID": "default0",
             "ComponentType": "Arthmetic.Calculus"
           },
           "Global": {
@@ -47,6 +49,7 @@ export const ArithmeticModules = {
             "BlockLength": 1024,
             "InputCount": 2,
             "OutputCount": 1,
+            "ComponentID": "default0",
             "ComponentType": "Arthmetic.NonLinear"
           },
           "Global": {

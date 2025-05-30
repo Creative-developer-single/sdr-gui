@@ -64,7 +64,7 @@ export function LogicGraphNode( { nodeID } ){
                             </div>
                         </div>
                         <div className="flex-initial basis-1/2 flex flex-col bg-gray-200 mx-6 mt-4 px-4 rounded-md shadow-md overflow-auto">
-                            {Object.entries(nodeData?.ComponentSetting || {}).map(([key,value])=> (
+                            {Object.entries(nodeData?.ComponentSettings || {}).map(([key,value])=> (
                                 <div className="font-medium font-serif text-xs my-1" key={key}>{ModulesListAlias[key]+": "+value}</div>
                             ))}
                         </div>

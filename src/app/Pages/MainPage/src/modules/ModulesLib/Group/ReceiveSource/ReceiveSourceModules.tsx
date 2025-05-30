@@ -10,6 +10,7 @@ export const ReceiveSourceModules = {
             "BlockLength": 1024,
             "InputCount": 1,
             "OutputCount": 1,
+            "ComponentID": "test0",
             "ComponentType": "test.testModule"
           },
           "Global": {

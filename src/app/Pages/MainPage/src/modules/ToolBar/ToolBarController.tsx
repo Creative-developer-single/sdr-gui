@@ -1,9 +1,11 @@
 import { ModulesEditorActions, ModulesEditorProviderInterface } from "../ModulesEditor/ModulesEditorProviderInterface";
+import { WebControllerInterface } from "../WebBridge/WebControllerInterface";
 import { LogicGraphProviderInterface } from "../WorkSpace/LogicGraphProvider/LogicGraphProviderInterface";
 
 interface CollectiveContext {
     ModulesEditor: ModulesEditorProviderInterface,
-    LogicGraph: LogicGraphProviderInterface
+    LogicGraph: LogicGraphProviderInterface,
+    WebController: WebControllerInterface
 }
 
 function ToolBarFileManager( item,context:CollectiveContext )
@@ -32,6 +34,16 @@ function ToolBarOpenModulesEditor( preloadType,actions:ModulesEditorActions ){
     console.log(`打开模块浏览器，类型: ${preloadType}`);
 }
 
+function ToolBarSimulationManager( item,context:CollectiveContext ){
+    switch(item.id){
+        case "VerifyGraph":
+            context.WebController.Actions.RPCModifyLogicGrapWithoutReply(context.LogicGraph.Actions.getLogicGraphData());
+            break;
+        default:
+            console.warn(`未处理的模拟管理器项: ${item.id}`);
+            break;
+    }
+}
 
 export function ToolBarController( itemID,item,SharedContext:CollectiveContext){
     switch (itemID){
@@ -44,6 +56,9 @@ export function ToolBarController( itemID,item,SharedContext:CollectiveContext){
             // 打开模块浏览器
             console.log("Item: ", item);
             ToolBarOpenModulesEditor(item.id,SharedContext.ModulesEditor.actions);
+            break;
+        case "simulate":
+            ToolBarSimulationManager(item,SharedContext);
             break;
         default:
             console.warn(`未处理的工具栏项: ${itemID}`);

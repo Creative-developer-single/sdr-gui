@@ -15,6 +15,8 @@ import { LogicGraphProvider } from './src/modules/WorkSpace/LogicGraphProvider/L
 import { LogicGraphNodeTest } from './src/modules/WorkSpace/LogicGraphEditor/LogicGraphNode/LogicGraphNodeTest';
 import { LogicGraphGUI } from './src/modules/WorkSpace/LogicGraphEditor/LogicGraphEditorGUI';
 import BezierAutoTest from './src/modules/WorkSpace/LogicGraphEditor/LogicGraphEdge/BezierAutoTest';
+import { WebSocketProvider } from './src/modules/WebBridge/WebSocket/WebSocketProvider';
+import { WebControllerProvider } from './src/modules/WebBridge/WebController';
 
 // ## 工作区组件 (Workspace)
 function Workspace() {
@@ -73,18 +75,21 @@ function App() {
 
     return (
         <div className="bg-gray-100 h-screen flex flex-col overflow-hidden">
-            <LogicGraphProvider>
-                <MenuBar activeItem={activeMenuId} onItemClick={handleMenuItemClick} />
-                <ModulesEditorProvider>
-                    <Toolbar onStart={onStart} activeMenuId={activeMenuId} />
-                    <ModuleBrouserEditor></ModuleBrouserEditor>
-                </ModulesEditorProvider>
-                <div className="flex flex-grow overflow-hidden">
-                    <Sidebar />
-                    <LogicGraphGUI></LogicGraphGUI>
-                </div>
-                
-            </LogicGraphProvider>
+            <WebSocketProvider url={"ws://172.27.234.221:9000/"}>
+                <WebControllerProvider>
+                    <LogicGraphProvider>
+                        <MenuBar activeItem={activeMenuId} onItemClick={handleMenuItemClick} />
+                        <ModulesEditorProvider>
+                            <Toolbar onStart={onStart} activeMenuId={activeMenuId} />
+                            <ModuleBrouserEditor></ModuleBrouserEditor>
+                        </ModulesEditorProvider>
+                        <div className="flex flex-grow overflow-hidden">
+                            <Sidebar />
+                            <LogicGraphGUI></LogicGraphGUI>
+                        </div>
+                    </LogicGraphProvider>
+                </WebControllerProvider>
+            </WebSocketProvider>
             
         </div>
     );

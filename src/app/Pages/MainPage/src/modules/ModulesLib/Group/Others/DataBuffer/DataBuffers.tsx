@@ -1,0 +1,25 @@
+export const DataBufferModules = {
+    "Modules": [
+      {
+        "Name": "SinglePortBuffer",
+        "Description": "单端口数据缓冲区",
+        "Properties": {
+          "Fixed": {
+            "ProcessMode": "block",
+            "BlockLength": 1024,
+            "InputCount": 1,
+            "OutputCount": 1,
+            "ComponentID": "Buffer1",
+            "ComponentType": "Others.DataBuffer.SinglePortBuffer"
+          },
+          "Global": {
+            "SampleRate": 48000,
+          },
+          "Local": {
+            "ComponentID": "Buffer1",
+            "bufferLength": 4096,
+          }
+        }
+      }
+    ]
+  }

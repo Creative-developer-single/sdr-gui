@@ -171,6 +171,14 @@ export function LogicGraphProvider( {children} ){
         );
     }
 
+    function getLogicGraphData(){
+        return {
+            Nodes: Nodes,
+            Edges: Edges,
+            VitrualEdges: VitrualEdges
+        }
+    }
+
     const contextValue = {
         Editor:EditorProps,
         VitrualEdges:VitrualEdges,
@@ -185,7 +193,8 @@ export function LogicGraphProvider( {children} ){
             clearVirtualEdge: clearVirtualEdge,
             addEdge: addEdge,
             removeEdge: removeEdge,
-            updateEdge: updateEdge
+            updateEdge: updateEdge,
+            getLogicGraphData: getLogicGraphData
         }
     }
 

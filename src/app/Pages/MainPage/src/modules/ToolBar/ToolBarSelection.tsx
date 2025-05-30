@@ -110,7 +110,7 @@ export const toolbarsConfig = {
         },
         {
             item:[
-                { id: 'verifyGraph', label:'验证流图',iconSrc:'../imgs/verify.png',action: ()=> console.log('基础运算器 Clicked') },
+                { id: 'VerifyGraph', label:'验证流图',iconSrc:'../imgs/verify.png',action: ()=> console.log('基础运算器 Clicked') },
                 { id: 'runSimulation', label:'开始仿真',iconSrc:'../imgs/runSimulation.png',action: ()=> console.log('基础运算器 Clicked') },
             ],
             id:'simulation',

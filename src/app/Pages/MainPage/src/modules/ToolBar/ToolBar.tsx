@@ -1,5 +1,6 @@
 import {menuItemsConfig} from '../Menu';
 import { useModulesEditor } from '../ModulesEditor/ModulesEditorProvider';
+import { useWebController } from '../WebBridge/WebController';
 import { useLogicGraph } from '../WorkSpace/LogicGraphProvider/LogicGraphProvider';
 import { toolbarsConfig } from '././ToolBarSelection';
 import { ToolBarController } from './ToolBarController';
@@ -31,10 +32,16 @@ function Toolbar({ activeMenuId ,onStart }) {
     const LogicGraphNodes = LogicGraphContext.Nodes || [];
     const LogicGraphActions = LogicGraphContext.Actions || {};
 
+    // 获取 WebController 上下文
+    const WebControllerContext = useWebController();
+    const WebControllerRPCReturnValue = WebControllerContext.rpcReturnValue;
+    const WebControllerActions = WebControllerContext.Actions || {};
+
     // 组装上下文对象，便于Controller访问
     const SharedContext = {
         ModulesEditor:ModulesEditorContext,
         LogicGraph:LogicGraphContext,
+        WebController:WebControllerContext,
     }
 
     function createTestWindow(){
@@ -62,13 +69,18 @@ function Toolbar({ activeMenuId ,onStart }) {
                     Title: '测试节点',
                     Type:'测试类型',
                 },
-                ComponentSetting:{
+                Ports:{
+                    InputPort:[],
+                    OutputPort:[]
+                },
+                ComponentSettings:{
                     mode:'default',
                     trigger:'false',
                     frequency:1000,
                     phase:0
                 },
                 ComponentType: 'default.defaultModule',
+                ComponentID: 'testNode'
             }
         )
 

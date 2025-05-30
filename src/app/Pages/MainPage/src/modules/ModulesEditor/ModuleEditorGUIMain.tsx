@@ -261,7 +261,8 @@ function ModuleEditorGUIMain( { windowId } ){
                                 InputCount:currentModule.Properties.Fixed.InputCount,
                                 OutputCount:currentModule.Properties.Fixed.OutputCount,
                                 ComponentType:currentModule.Properties.Fixed.ComponentType,
-                                ComponentSetting:{
+                                ComponentID:currentModule.Properties.Fixed.ComponentID,
+                                ComponentSettings:{
                                     ...currentModule.Properties.Local
                                 }
                             }

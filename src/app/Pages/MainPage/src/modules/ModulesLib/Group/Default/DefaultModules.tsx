@@ -9,7 +9,8 @@ export const DefaultModules = {
             "BlockLength": 1024,
             "InputCount": 1,
             "OutputCount": 1,
-            "ComponentType": "default.defaultModule"
+            "ComponentType": "default.defaultModule",
+            "ComponentID": "default0"
           },
           "Global": {
             "SampleRate": 10000
@@ -29,6 +30,7 @@ export const DefaultModules = {
             "BlockLength": 1024,
             "InputCount": 2,
             "OutputCount": 1,
+            "ComponentID": "default0",
             "ComponentType": "default.defaultModule"
           },
           "Global": {
@@ -49,6 +51,7 @@ export const DefaultModules = {
             "BlockLength": 1024,
             "InputCount": 1,
             "OutputCount": 1,
+            "ComponentID": "default0",
             "ComponentType": "default.defaultModule"
           },
           "Global": {
@@ -69,6 +72,7 @@ export const DefaultModules = {
             "BlockLength": 1024,
             "InputCount": 1,
             "OutputCount": 1,
+            "ComponentID": "default0",
             "ComponentType": "default.defaultModule"
           },
           "Global": {
@@ -89,6 +93,7 @@ export const DefaultModules = {
             "BlockLength": 1024,
             "InputCount": 1,
             "OutputCount": 1,
+            "ComponentID": "default0",
             "ComponentType": "default.defaultModule"
           },
           "Global": {

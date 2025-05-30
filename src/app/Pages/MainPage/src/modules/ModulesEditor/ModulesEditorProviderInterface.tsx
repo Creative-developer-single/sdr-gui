@@ -24,6 +24,7 @@ export interface ModulesDataProps{
             InputCount:number,
             OutputCount:number,
             ComponentType:string,
+            ComponentID:string
         },
         Global?:ModulesDynamicProps,
         Local?:ModulesDynamicProps
@@ -43,6 +44,7 @@ export interface ModulesData{
                 InputCount:number,
                 OutputCount:number,
                 ComponentType:string,
+                ComponentID:string
             },
             Global?:ModulesDynamicProps,
             Local?:ModulesDynamicProps
