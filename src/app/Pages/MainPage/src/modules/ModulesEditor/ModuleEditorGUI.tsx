@@ -1,23 +1,70 @@
-import { useEffect, useState } from "react";
 import FloatWindow from "../FloatWindow/FloatWindow";
 import { useModulesEditor } from "./ModulesEditorProvider";
-import { ModulesData, ModulesEditorActions, ModulesEditorProviderInterface } from "./ModulesEditorProviderInterface";
-import { FloatWindowPropInterface, UpdateStatusInterface } from "../FloatWindow/FloatWindowPropInterface";
+import { ModulesData, ModulesEditorActions } from "./ModulesEditorProviderInterface";
+import {UpdateStatusInterface } from "../FloatWindow/FloatWindowPropInterface";
 import ModuleEditorGUIMain from "./ModuleEditorGUIMain";
+import SelectedModuleEditorGUIMain from "./SelectedModuleEditorGUI";
 
 function ModuleBrouserEditor(){
     const { modulesData, actions } = useModulesEditor();
-    const windows = modulesData.filter(window => window.guiProps.mode === 'ModulesBrouser');
-    console.log("window:", modulesData);
+    const windows = modulesData.filter(window => window.GuiProps.mode === 'ModulesBrouser');
+    //console.log("window:", modulesData);
    
     return (
         <div>
             {windows.map((window) => (
-                <ModuleBrouserEditorItem key={window.guiProps.id} item={window} actions={actions}/>
+                <ModuleBrouserEditorItem key={window.GuiProps.id} item={window} actions={actions}/>
             ))
             }
         </div>
    )
+}
+
+export function ModulesEditor(){
+    const { modulesData, actions } = useModulesEditor();
+    const windows = modulesData.filter(window => window.GuiProps.mode === 'ModulesEditor');
+    //console.log("window:", modulesData);
+
+    return (
+        <div>
+            {windows.map((window) => (
+                <ModulesEditorItem key={window.GuiProps.id} item={window} actions={actions}/>
+            ))
+            }
+        </div>
+    )
+}
+
+function ModulesEditorItem( { item, actions } : { item: ModulesData, actions: ModulesEditorActions }) {
+    // 处理窗口状态更新
+    function onUpdateStatus(data: UpdateStatusInterface) {
+        console.log('窗口状态更新：', data);
+        actions.updateGUIStatus(data);
+    }
+
+    function onGUIDestroy(windowId: number) {
+        console.log('窗口销毁：', windowId);
+        actions.removeGUI(windowId);
+    }
+
+    const windowData = {
+        icon:'😊',
+        id:item.GuiProps.id,
+        title:'模块浏览器',
+        isOpen:item.GuiProps.isOpen,
+        posX:item.GuiProps.posX,
+        posY:item.GuiProps.posY,
+        width:item.GuiProps.width,
+        height:item.GuiProps.height,
+        onUpdateStatus: onUpdateStatus,
+        onGUIDestroy: onGUIDestroy,
+    }
+
+    return (
+        <FloatWindow data={windowData}>
+            <SelectedModuleEditorGUIMain windowId={windowData.id}></SelectedModuleEditorGUIMain>
+        </FloatWindow>
+    )
 }
 
 function ModuleBrouserEditorItem( { item,actions } : { item:ModulesData , actions:ModulesEditorActions}){
@@ -35,32 +82,16 @@ function ModuleBrouserEditorItem( { item,actions } : { item:ModulesData , action
 
     const windowData = {
         icon:'😊',
-        id:item.guiProps.id,
+        id:item.GuiProps.id,
         title:'模块浏览器',
-        isOpen:item.guiProps.isOpen,
-        posX:item.guiProps.posX,
-        posY:item.guiProps.posY,
-        width:item.guiProps.width,
-        height:item.guiProps.height,
+        isOpen:item.GuiProps.isOpen,
+        posX:item.GuiProps.posX,
+        posY:item.GuiProps.posY,
+        width:item.GuiProps.width,
+        height:item.GuiProps.height,
         onUpdateStatus: onUpdateStatus,
         onGUIDestroy: onGUIDestroy,
     }
-
-    // 打开窗口
-    function onStart(){
-        let windowDataNew = windowData;
-        windowDataNew.isOpen = true;
-        onUpdateStatus(windowDataNew);
-    }
-
-    // 关闭窗口
-    function onClose(){
-        let windowDataNew = windowData;
-        windowDataNew.isOpen = false;
-        console.log('窗口关闭：', windowData);
-        onUpdateStatus(windowData);
-    }
-
     /*
     return (
         <FloatWindow data={windowData}>

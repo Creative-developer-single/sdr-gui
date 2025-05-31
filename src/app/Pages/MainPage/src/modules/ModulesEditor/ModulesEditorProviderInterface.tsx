@@ -1,4 +1,4 @@
-import { FloatWindowPropInterface, UpdateStatusInterface } from "../FloatWindow/FloatWindowPropInterface"
+import { UpdateStatusInterface } from "../FloatWindow/FloatWindowPropInterface"
 
 interface ModulesDynamicProps{
     [key : string] : any
@@ -15,6 +15,7 @@ interface ModulesEditorGUIProps{
 }
 
 export interface ModulesDataProps{
+    Type:string,
     Name:string,
     Description:string,
     Properties:{
@@ -32,24 +33,8 @@ export interface ModulesDataProps{
 }
 
 export interface ModulesData{
-    guiProps:ModulesEditorGUIProps,
-    InfoData:{
-        Type:string,
-        Name:string,
-        Description:string,
-        Properties:{
-            Fixed:{
-                ProcessMode:string,
-                BlockLength:number,
-                InputCount:number,
-                OutputCount:number,
-                ComponentType:string,
-                ComponentID:string
-            },
-            Global?:ModulesDynamicProps,
-            Local?:ModulesDynamicProps
-        }
-    }
+    GuiProps:ModulesEditorGUIProps,
+    ModulesData:ModulesDataProps
 }
 
 export interface ModulesEditorActions{

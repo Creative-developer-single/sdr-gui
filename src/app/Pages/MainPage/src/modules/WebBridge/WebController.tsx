@@ -30,7 +30,7 @@ export function WebControllerProvider( {children} ){
     */
 
     function RPCModifyLogicGraphWithoutReply( logicGraph:LogicGraphDataInterface){
-        let newRPCFrame:RPCFrameInterface = {
+        const newRPCFrame:RPCFrameInterface = {
             RPCFrame:{
                 TargetModule: "LogicGraph",
                 Command: "RPCLoadLogicGraph",
@@ -46,7 +46,7 @@ export function WebControllerProvider( {children} ){
     }
 
     function RPCModifyLogicGraph( logicGraph:LogicGraphDataInterface ){
-        let newRPCFrame:RPCFrameInterface = {
+        const newRPCFrame:RPCFrameInterface = {
             RPCFrame:{
                 TargetModule: "LogicGraph",
                 Command: "RPCLoadLogicGraph",

@@ -65,7 +65,7 @@ export function LogicGraphNodeInputPorts( { nodeData } : { nodeData?:LogicGraphN
 
     return (
         <div className="flex flex-col h-full justify-center items-center">
-            {nodeData.Ports.InputPort.map((item) => (
+            {nodeData.GuiProps.Ports.InputPort.map((item) => (
                 <LogicGraphNodePort key={item.PortIndex} NodeID={nodeData.ID} PortIndex={item.PortIndex} PortType="TerminalPoint" />
             ))}
         </div>
@@ -79,7 +79,7 @@ export function LogicGraphNodeOutputPorts( { nodeData } : { nodeData?:LogicGraph
 
     return (
         <div className="flex flex-col h-full justify-center items-center">
-            {nodeData.Ports.OutputPort.map((item) => (
+            {nodeData.GuiProps.Ports.OutputPort.map((item) => (
                 <LogicGraphNodePort key={item.PortIndex} NodeID={nodeData.ID} PortIndex={item.PortIndex} PortType="StartPoint" />
             ))}
         </div>

@@ -1,6 +1,7 @@
 export const DataBufferModules = {
     "Modules": [
       {
+        "Type": "DataBuffer",
         "Name": "SinglePortBuffer",
         "Description": "单端口数据缓冲区",
         "Properties": {

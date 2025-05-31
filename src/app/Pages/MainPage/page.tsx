@@ -6,7 +6,7 @@ import MenuBar from './src/modules/Menu';
 import Toolbar from './src/modules/ToolBar/ToolBar';
 import Sidebar from './src/modules/SideBar';
 import { UpdateStatusInterface } from './src/modules/FloatWindow/FloatWindowPropInterface';
-import ModuleBrouserEditor from './src/modules/ModulesEditor/ModuleEditorGUI';
+import ModuleBrouserEditor, { ModulesEditor } from './src/modules/ModulesEditor/ModuleEditorGUI';
 import { ModulesEditorProvider } from './src/modules/ModulesEditor/ModulesEditorProvider';
 import { LogicGraphProvider } from './src/modules/WorkSpace/LogicGraphProvider/LogicGraphProvider';
 import { LogicGraphGUI } from './src/modules/WorkSpace/LogicGraphEditor/LogicGraphEditorGUI';
@@ -73,15 +73,17 @@ function App() {
             <WebSocketProvider url={"ws://172.27.234.221:9000/"}>
                 <WebControllerProvider>
                     <LogicGraphProvider>
-                        <MenuBar activeItem={activeMenuId} onItemClick={handleMenuItemClick} />
                         <ModulesEditorProvider>
+                        <MenuBar activeItem={activeMenuId} onItemClick={handleMenuItemClick} />
+                        
                             <Toolbar onStart={onStart} activeMenuId={activeMenuId} />
                             <ModuleBrouserEditor></ModuleBrouserEditor>
-                        </ModulesEditorProvider>
+                            <ModulesEditor></ModulesEditor>
                         <div className="flex flex-grow overflow-hidden">
                             <Sidebar />
                             <LogicGraphGUI></LogicGraphGUI>
                         </div>
+                        </ModulesEditorProvider>
                     </LogicGraphProvider>
                 </WebControllerProvider>
             </WebSocketProvider>

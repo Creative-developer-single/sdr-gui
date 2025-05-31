@@ -1,6 +1,7 @@
 export const DefaultModules = {
     "Modules": [
       {
+        "Type": "Default",
         "Name": "defaultModule",
         "Description": "这是一个默认模块",
         "Properties": {
@@ -22,6 +23,7 @@ export const DefaultModules = {
         }
       },
       {
+        "Type": "Default",
         "Name": "defaultModule2",
         "Description": "这是一个默认模块",
         "Properties": {
@@ -43,6 +45,7 @@ export const DefaultModules = {
         }
       },
       {
+        "Type": "Default",
         "Name": "defaultModule3",
         "Description": "这是一个默认模块",
         "Properties": {
@@ -64,6 +67,7 @@ export const DefaultModules = {
         }
       },
       {
+        "Type": "Default",
         "Name": "defaultModule4",
         "Description": "这是一个默认模块",
         "Properties": {
@@ -85,6 +89,7 @@ export const DefaultModules = {
         }
       },
       {
+        "Type": "Default",
         "Name": "defaultModule5",
         "Description": "这是一个默认模块",
         "Properties": {

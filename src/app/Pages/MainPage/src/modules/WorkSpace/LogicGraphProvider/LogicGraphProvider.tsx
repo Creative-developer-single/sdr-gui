@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useState } from "react";
-import { LogicGraphNodePortProps, LogicGraphNodesProp, LogicGraphProviderInterface, VitrualSingleEdgeProp } from "./LogicGraphProviderInterface";
+import { LogicGraphNodesProp, LogicGraphProviderInterface, VitrualSingleEdgeProp } from "./LogicGraphProviderInterface";
 
 // 创建Context对象
 const logicGraphContext = createContext<LogicGraphProviderInterface | null>(null);
@@ -56,7 +56,7 @@ export function LogicGraphProvider( {children} ){
 
 
         // 分配随机位置
-        node.Pos = {
+        node.GuiProps.Pos = {
             X: Math.random() * 5000, // 假设画布宽度为800
             Y: Math.random() * 5000  // 假设画布高度为600
         };
@@ -80,7 +80,7 @@ export function LogicGraphProvider( {children} ){
 
     // 更新节点
     function updateNode(nodeID: number, updates: Partial<LogicGraphNodesProp>){
-        let newNodes = Nodes.map(node =>
+        const newNodes = Nodes.map(node =>
             node.ID === nodeID ? { ...node, ...updates } : node);
         setNodes(newNodes);
     }

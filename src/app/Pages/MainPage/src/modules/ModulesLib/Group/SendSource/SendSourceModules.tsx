@@ -1,6 +1,7 @@
  export const SendSourceModules = {
   "Modules": [
     {
+      "Type": "SendSource",
       "Name": "SignalGenerator",
       "Description": "多波形发生器",
       "Properties": {

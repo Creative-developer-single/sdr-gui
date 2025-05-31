@@ -7,7 +7,7 @@ import { useLogicGraph } from "../WorkSpace/LogicGraphProvider/LogicGraphProvide
 import { LogicGraphNodesProp } from "../WorkSpace/LogicGraphProvider/LogicGraphProviderInterface";
 import { LogicGraphShownNode } from "../WorkSpace/LogicGraphEditor/LogicGraphNode/LogicGraphNode";
 
-function ModuleEditorGUIMain( { windowId } ){
+function SelectedModuleEditorGUIMain( { windowId } ){
     // 获取模块编辑器的上下文
     const { modulesData,actions } = useModulesEditor();
 
@@ -19,13 +19,15 @@ function ModuleEditorGUIMain( { windowId } ){
     // 获取当前窗口数据
     const windowData = modulesData.find(window => window.GuiProps.id === windowId);
 
-    // 分类和模块名称
-    const [activeType, setActiveType] = useState(windowData?.ModulesData.Type || ''); // 当前选中的分类类型
-    const [activeName, setActiveName] = useState(windowData?.ModulesData.Name || ''); // 当前选中的分类类型
+    // 分类和模块名
+    const activeType = windowData?.ModulesData.Type || 'Default'; // 当前选中的分类类型
+    const activeName = windowData?.ModulesData.Name || ModulesList[0].Modules[0].Name; // 当前选中的模块名
+     // 当前选中的分类类型
 
     // 定义当前选定的模块信息结构
-    const [currentModule,setCurrentModuleData] = useState<ModulesDataProps>(ModulesList[0].Modules[0]);
+    const [currentModule,setCurrentModuleData] = useState<ModulesDataProps>(windowData?.ModulesData || ModulesList[0].Modules[0]);
 
+    console.log(windowData);
 
     // 检查是否存在
     function getAllProperties(module){
@@ -67,91 +69,9 @@ function ModuleEditorGUIMain( { windowId } ){
         }
     }
 
-    function handleModuleClick(type,params){
-        if( type === "ModuleType"){
-            setActiveType(params);
-            
-            // 默认选中该分类下的第一个模块
-            const firstModule = ModulesList.find(group => group.GroupName === params)?.Modules[0];
-            if (firstModule) {
-                setActiveName(firstModule.Name);
-                // 更新当前模块数据
-                setCurrentModuleData(firstModule);
-            }
-        }else if( type === "ModuleName"){
-            setActiveName(params);
-            // 更新当前模块数据
-            const moduleProps = getModulePropsByName(params);
-            if (moduleProps) {
-                setCurrentModuleData(moduleProps);
-            }
-        }
-
-    }
-
     return (
         <div className="flex flex-row bg-slate-100 w-full h-full pb-10">
-            <div className="flex flex-col basis-2/5 h-full items-center space-between">
-            <div className="h-2/5 flex-initial w-full px-2 border-gray-600 rounded-md p-2">
-            <div className="flex flex-col flex-initial  h-full w-full px-2 shadow-lg bg-slate-50 border-gray-600 rounded-md">
-                <div className="text-blue-950 text-left font-semibold border-b border-gray-400 ml-2 mr-2 py-2">模块分类</div>
-                <div className="flex flex-col overflow-y-auto">
-                    {
-                        ModulesList.map(group => (
-                           <ul
-                                key={group.GroupName}
-                                className={` 
-                                            flex-grow
-                                          border-gray-300 
-                                            rounded-sm
-                                            font-semibold
-                                            shadow-md
-                                            px-2
-                                            py-1
-                                            mx-2
-                                            my-1
-                                            ${group.GroupName === activeType ? 'bg-sky-600 text-white' : 'bg-white text-blue-950 hover:bg-sky-50'
-                                            }`}
-                                            onClick={() => handleModuleClick("ModuleType", group.GroupName)}
-                            >
-                                {group.GroupName}
-                            </ul>
-                        ))
-                    }
-                </div>
-            </div>
-            </div>
-            <div className="h-3/5 flex-initial w-full px-2 border-gray-600 rounded-md">
-            <div className="px-2 flex flex-col flex-initial h-full w-full shadow-lg bg-slate-50 border-gray-600 rounded-md">
-                    <div className="text-blue-950 text-left font-semibold border-b border-gray-400 ml-2 mr-2 py-2">模块列表</div>
-                    <div className="mt-2 w-full h-full flex flex-col overflow-auto">
-                        {
-                            ModulesList.map(group => (
-                                group.GroupName === activeType && group.Modules.map(module => (
-                                    <div
-                                        key={module.Name}
-                                        className={` border-gray-300 
-                                                    rounded-sm
-                                                    min-w-0
-                                                    font-semibold
-                                                    shadow-md
-                                                    px-2
-                                                    py-1.5
-                                                    mx-2
-                                                    my-1
-                                                    ${module.Name === activeName ? 'bg-sky-600 text-white' : 'bg-white text-blue-950 hover:bg-sky-50'
-                                                    }`}
-                                        onClick={() => handleModuleClick("ModuleName", module.Name)}
-                                    >
-                                        {module.Name}
-                                    </div>
-                                ))
-                            ))
-                        }
-                    </div>
-                </div>
-                </div>
-        </div>
+            
         {/* 现在开始构建右侧界面：
             组件1：模块预览图
             组件2：模块参数配置列表
@@ -260,7 +180,7 @@ function ModuleEditorGUIMain( { windowId } ){
                                 GuiProps:{
                                     IconSrc:'../imgs/alu.png',
                                     Title:currentModule.Name,
-                                    Type:currentModule.Type,
+                                    Type:currentModule.Name,
                                     Pos:{
                                         X:0,
                                         Y:0
@@ -270,12 +190,7 @@ function ModuleEditorGUIMain( { windowId } ){
                                         OutputPort: OutputPorts
                                     },
                                 },
-                                NodesData:{
-                                    Type:currentModule.Type,
-                                    Name:currentModule.Name,
-                                    Description:currentModule.Description,
-                                    Properties:currentModule.Properties
-                                }
+                                NodesData:currentModule
                             }
                             LogicGraphActions.addNode(newNode);
                         }}>应用配置</button>
@@ -289,4 +204,4 @@ function ModuleEditorGUIMain( { windowId } ){
     )
 }
 
-export default ModuleEditorGUIMain;
+export default SelectedModuleEditorGUIMain;

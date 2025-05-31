@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useState } from "react";
 import { ModulesList } from "../ModulesLib/ModulesList";
 import { ModulesData, ModulesEditorProviderInterface } from "./ModulesEditorProviderInterface";
-import { FloatWindowPropInterface, UpdateStatusInterface } from "../FloatWindow/FloatWindowPropInterface";
+import { UpdateStatusInterface } from "../FloatWindow/FloatWindowPropInterface";
 
 //Context for ModulesEditor
 const modulesEditorContext = createContext<ModulesEditorProviderInterface | null>(null);
@@ -18,7 +18,7 @@ export const useModulesEditor = () => {
 export function ModulesEditorProvider({ children }) {
     const [modulesData, setModulesData] = useState<ModulesData[]>([
         {
-            guiProps:{
+            GuiProps:{
                 id:0,
                 isOpen:false,
                 posX:0,
@@ -27,7 +27,7 @@ export function ModulesEditorProvider({ children }) {
                 height:300,
                 mode:'ModulesBrouser',
             },
-            InfoData:{
+            ModulesData:{
                 Type:'default',
                 Name:'defaultModule',
                 Description:'这是一个默认模块',
@@ -52,10 +52,11 @@ export function ModulesEditorProvider({ children }) {
         }],
     );
 
+    /*
     function createNewWindow(){
         const newWindow = {
-            guiProps:{
-                id: Math.max(...modulesData.map(item => item.guiProps.id)) + 1,
+            GuiProps:{
+                id: Math.max(...modulesData.map(item => item.GuiProps.id)) + 1,
                 isOpen: false,
                 posX: 0,
                 posY: 0,
@@ -83,7 +84,7 @@ export function ModulesEditorProvider({ children }) {
             }
         };
         return newWindow;
-    }
+    }*/
 
     const openEditorGUI = useCallback((preLoadData) => {
         //获取当前窗口请求id，若为0，则视为新建窗口，合法窗口id为1-n
@@ -106,8 +107,8 @@ export function ModulesEditorProvider({ children }) {
                 if (moduleGroup && moduleGroup.Modules.length > 0) {
                     const moduleInfo = moduleGroup.Modules[0];
                     const newWindow = {
-                        guiProps:{
-                        id: Math.max(...modulesData.map(item => item.guiProps.id)) + 1,
+                        GuiProps:{
+                        id: Math.max(...modulesData.map(item => item.GuiProps.id)) + 1,
                         isOpen: true,
                         posX: 100,
                         posY: 100,
@@ -115,7 +116,7 @@ export function ModulesEditorProvider({ children }) {
                         height: preloadHeight,
                         mode: windowMode,
                         },
-                        InfoData: {
+                        ModulesData: {
                             Type: preloadType,
                             Name: moduleInfo.Name,
                             Description: moduleInfo.Description,
@@ -129,16 +130,59 @@ export function ModulesEditorProvider({ children }) {
                 }else{
                     console.error(`未找到匹配的模块组: ${preloadType}`);
                 }
+            }else{
+                // 如果不是模块浏览器，则为模块编辑器
+                // 查找ModulesList和ModulesData相同的模块
+                const moduleGet = ModulesList.find(item => item.GroupName === preLoadData.ModulesData.GuiProps.Type)?.Modules.find(
+                    item => item.Name === preLoadData.ModulesData.ComponentType
+                );
+
+                const newWindow:ModulesData = {
+                    GuiProps:{
+                        id: Math.max(...modulesData.map(item => item.GuiProps.id)) + 1,
+                        isOpen: true,
+                        posX: 300+ 100*Math.random(),
+                        posY: 300+ 100*Math.random(),
+                        width: preloadWidth,
+                        height: preloadHeight,
+                        mode: 'ModulesEditor',
+                    },
+                    ModulesData:{
+                        Type:preLoadData.ModulesData.GuiProps.Type,
+                        Name:preLoadData.ModulesData.GuiProps.Title,
+                        Description:moduleGet?.Description || '这是一个模块编辑器',
+                        Properties:{
+                            Fixed:{
+                                ProcessMode:moduleGet?.Properties.Fixed.ProcessMode || 'block',
+                                BlockLength:preLoadData.ModulesData.BlockLength || moduleGet?.Properties.Fixed.BlockLength || 1024,
+                                InputCount:preLoadData.ModulesData.InputCount || moduleGet?.Properties.Fixed.InputCount || 1,
+                                OutputCount:preLoadData.ModulesData.OutputCount || moduleGet?.Properties.Fixed.OutputCount || 1,
+                                ComponentType:preLoadData.ModulesData.ComponentType || moduleGet?.Properties.Fixed.ComponentType || 'default.defaultModule',
+                                ComponentID:preLoadData.ModulesData.ComponentID || moduleGet?.Properties.Fixed.ComponentID || 'default0'
+                            },
+                            Global:moduleGet?.Properties.Global || {
+                                SampleRate:10000,
+                            },
+                            Local:preLoadData.ModulesData.ComponentSettings || {}
+                        }
+                    }
+                }
+                console.log("新建窗口数据：", newWindow);
+                //添加新窗口
+                setModulesData((prevState) => {
+                    return [...prevState, newWindow];
+                }
+                );
             }
         }else{
             //如果窗口id不为0，则视为已有窗口，直接打开
             //通过id查找窗口
-            const window = modulesData.find(window => window.guiProps.id === windowId);
+            const window = modulesData.find(window => window.GuiProps.id === windowId);
             if (window) {
                 //如果找到窗口，则打开
                 setModulesData((prevState) => {
                     const updatedWindows = prevState.map(win => {
-                        if (win.guiProps.id === windowId) {
+                        if (win.GuiProps.id === windowId) {
                             return { ...win, isOpen: true };
                         }
                         return win;
@@ -147,13 +191,13 @@ export function ModulesEditorProvider({ children }) {
                 });
             }
         }
-    },[]);
+    },[modulesData]);
 
     const updateGUIStatus = useCallback((windowStatus : UpdateStatusInterface) => {
         setModulesData((prevState) => {
             const updatedWindows = prevState.map(window => {
-                if (window.guiProps.id === windowStatus.id) {
-                    return { ...window, guiProps: { ...window.guiProps, ...windowStatus } };
+                if (window.GuiProps.id === windowStatus.id) {
+                    return { ...window, GuiProps: { ...window.GuiProps, ...windowStatus } };
                 }
                 return window;
             });
@@ -163,7 +207,7 @@ export function ModulesEditorProvider({ children }) {
 
     const removeGUI = useCallback((windowId : number) => {
         setModulesData((prevState) => {
-            const updatedWindows = prevState.filter(window => window.guiProps.id !== windowId);
+            const updatedWindows = prevState.filter(window => window.GuiProps.id !== windowId);
             return updatedWindows;
         });
     },[])

@@ -15,8 +15,6 @@ function FloatWindow({
     const [isDragging, setIsDragging] = useState(false);
     const [dragStartOffset, setDragStartOffset] = useState({ x: 0, y: 0 });
 
-    const [UpDataStatusData, setUpdateStatusData] = useState({id,isOpen, width, height, posX, posY});
-
     const windowRef = useRef<HTMLDivElement>(null);
 
     // Listen to the mouse down event
@@ -48,16 +46,8 @@ function FloatWindow({
     }, [isDragging, dragStartOffset,position.x, position.y]);
 
     // Listen to the mouse up event
-    const handleMouseUp = useCallback((e) => {
+    const handleMouseUp = useCallback(() => {
         setIsDragging(false);
-        setUpdateStatusData({
-            id,
-            isOpen,
-            width,
-            height,
-            posX,
-            posY,
-        });
 
         // 移除 user-select-none 类
         document.body.classList.remove('user-select-none');

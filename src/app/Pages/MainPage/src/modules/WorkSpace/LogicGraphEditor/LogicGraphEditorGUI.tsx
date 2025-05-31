@@ -2,7 +2,6 @@ import { useRef, useState, useEffect } from 'react';
 import '../../../css/index.css';
 import { LogicGraphNodeList } from './LogicGraphNode/LogicGraphNodeList';
 import { useLogicGraph } from '../LogicGraphProvider/LogicGraphProvider';
-import GnuRadioBezier from './LogicGraphEdge/GnuRadioBezier';
 import MultiBezierRenderer from './LogicGraphEdge/BezierLine/MultiBezierLine';
 import { LogicGraphNodesProp } from '../LogicGraphProvider/LogicGraphProviderInterface';
 
@@ -116,18 +115,18 @@ export function LogicGraphEditorGUIMain({ children }) {
       case "TerminalPoint":
         // 计算起始端口位置
         // 起始端口位于左侧，长12px，宽12px，靠近左侧，高度按照端口数量平分
-        const portPerInterval = 150 / (nodeData.InputCount+1);
+        const portPerInterval = 150 / (nodeData.NodesData.Properties.Fixed.InputCount+1);
         return {
-          x: nodeData.Pos.X + 12,
-          y: nodeData.Pos.Y + portPerInterval * (portIndex + 1)
+          x: nodeData.GuiProps.Pos.X + 12,
+          y: nodeData.GuiProps.Pos.Y + portPerInterval * (portIndex + 1)
         } 
       case "StartPoint":
         // 计算终止端口位置
         // 终止端口位于右侧，长12px，宽12px，靠近右侧，高度按照端口数量平分
-        const portPerIntervalEnd = 150 / (nodeData.OutputCount+1);
+        const portPerIntervalEnd = 150 / (nodeData.NodesData.Properties.Fixed.OutputCount+1);
         return {
-          x: nodeData.Pos.X + 250 - 12,
-          y: nodeData.Pos.Y + portPerIntervalEnd * (portIndex + 1)
+          x: nodeData.GuiProps.Pos.X + 250 - 12,
+          y: nodeData.GuiProps.Pos.Y + portPerIntervalEnd * (portIndex + 1)
         }
     }
   }

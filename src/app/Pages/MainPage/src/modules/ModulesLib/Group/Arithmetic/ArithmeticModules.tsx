@@ -1,6 +1,7 @@
 export const ArithmeticModules = {
     "Modules": [
       {
+        "Type":"Arithmetic",
         "Name": "basicALU",
         "Description": "基础运算器",
         "Properties": {
@@ -21,6 +22,7 @@ export const ArithmeticModules = {
         }
       },
       {
+        "Type":"Arithmetic",
         "Name": "Calculus",
         "Description": "微积分器",
         "Properties": {
@@ -41,6 +43,7 @@ export const ArithmeticModules = {
         }
       },
       {
+        "Type":"Arithmetic",
         "Name": "NonLinear",
         "Description": "非线性运算器",
         "Properties": {
