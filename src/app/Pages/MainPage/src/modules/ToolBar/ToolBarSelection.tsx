@@ -110,6 +110,7 @@ export const toolbarsConfig = {
         },
         {
             item:[
+                { id: 'SimulationSetting' , label:'仿真设置',iconSrc:'../imgs/ToolsBar/SimulationSetting.png',action: ()=> console.log('基础运算器 Clicked') },
                 { id: 'VerifyGraph', label:'验证流图',iconSrc:'../imgs/verify.png',action: ()=> console.log('基础运算器 Clicked') },
                 { id: 'runSimulation', label:'开始仿真',iconSrc:'../imgs/runSimulation.png',action: ()=> console.log('基础运算器 Clicked') },
             ],

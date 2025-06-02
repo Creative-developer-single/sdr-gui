@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { LogicGraphDataInterface } from "../WorkSpace/LogicGraphProvider/LogicGraphProviderInterface";
+import { convertLogicGraphDataToBackgroundData, LogicGraphDataInterface } from "../WorkSpace/LogicGraphProvider/LogicGraphProviderInterface";
 import { RPCFrameInterface, WebControllerInterface } from "./WebControllerInterface";
 import { useWebSocket } from "./WebSocket/WebSocketProvider";
 import { createContext } from "react";
@@ -34,7 +34,7 @@ export function WebControllerProvider( {children} ){
             RPCFrame:{
                 TargetModule: "LogicGraph",
                 Command: "RPCLoadLogicGraph",
-                Args:logicGraph,
+                Args:convertLogicGraphDataToBackgroundData(logicGraph),
                 return: "Null"
             }
         }

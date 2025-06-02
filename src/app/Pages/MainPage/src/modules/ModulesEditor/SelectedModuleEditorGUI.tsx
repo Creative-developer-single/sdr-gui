@@ -1,7 +1,7 @@
 import { useModulesEditor } from "./ModulesEditorProvider";
 import { ModulesList,ModulesListAlias } from "../ModulesLib/ModulesList";
 import '../../css/index.css';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ModulesDataProps } from "./ModulesEditorProviderInterface";
 import { useLogicGraph } from "../WorkSpace/LogicGraphProvider/LogicGraphProvider";
 import { LogicGraphNodesProp } from "../WorkSpace/LogicGraphProvider/LogicGraphProviderInterface";
@@ -18,16 +18,17 @@ function SelectedModuleEditorGUIMain( { windowId } ){
 
     // 获取当前窗口数据
     const windowData = modulesData.find(window => window.GuiProps.id === windowId);
+    console.log("当前选择窗口数据：", windowData);
+    
+
+    // 定义当前选定的模块信息结构
+    const [currentModule,setCurrentModuleData] = useState<ModulesDataProps>(windowData?.ModulesData || ModulesList[1].Modules[1]);
 
     // 分类和模块名
     const activeType = windowData?.ModulesData.Type || 'Default'; // 当前选中的分类类型
-    const activeName = windowData?.ModulesData.Name || ModulesList[0].Modules[0].Name; // 当前选中的模块名
+    const activeName = windowData?.ModulesData.Name || ModulesList[1].Modules[1].Name; // 当前选中的模块名
      // 当前选中的分类类型
-
-    // 定义当前选定的模块信息结构
-    const [currentModule,setCurrentModuleData] = useState<ModulesDataProps>(windowData?.ModulesData || ModulesList[0].Modules[0]);
-
-    console.log(windowData);
+    
 
     // 检查是否存在
     function getAllProperties(module){
@@ -55,19 +56,6 @@ function SelectedModuleEditorGUIMain( { windowId } ){
         }
     }*/
 
-    function getModulePropsByName(moduleName){
-        //获取目标模块
-        const group = ModulesList.find(group => group.GroupName === activeType);
-        const moduleGet = group?.Modules.find(mod => mod.Name === moduleName);
-
-        // 如果模块存在，那么获取属性
-        if (moduleGet){
-            return moduleGet;
-        }else{
-            console.error(`模块 ${moduleName} 不存在于分类 ${activeType} 中`);
-            return null;
-        }
-    }
 
     return (
         <div className="flex flex-row bg-slate-100 w-full h-full pb-10">
@@ -192,7 +180,7 @@ function SelectedModuleEditorGUIMain( { windowId } ){
                                 },
                                 NodesData:currentModule
                             }
-                            LogicGraphActions.addNode(newNode);
+                            LogicGraphActions.updateNode(newNode.ID,newNode);
                         }}>应用配置</button>
                 </div>
                 </div>

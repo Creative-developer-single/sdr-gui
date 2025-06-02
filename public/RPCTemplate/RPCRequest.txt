@@ -1,0 +1,20 @@
+CTRL
+{
+  "command": {
+    "RPCFrame": {
+      "TargetModule": "LogicGraph",
+      "Command": "RPCGetNodeAns",
+      "Args": {
+        "Nodes": [
+          {
+            "ID": 1,
+            "Index": 0,
+            "Length": 1024
+          }
+        ]
+      },
+      "return": "Null"
+    }
+  },
+  "id": 0
+}

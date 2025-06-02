@@ -24,7 +24,7 @@ function ModuleEditorGUIMain( { windowId } ){
     const [activeName, setActiveName] = useState(windowData?.ModulesData.Name || ''); // 当前选中的分类类型
 
     // 定义当前选定的模块信息结构
-    const [currentModule,setCurrentModuleData] = useState<ModulesDataProps>(ModulesList[0].Modules[0]);
+    const [currentModule,setCurrentModuleData] = useState<ModulesDataProps>(windowData?.ModulesData || ModulesList[0].Modules[0]);
 
 
     // 检查是否存在
@@ -250,7 +250,7 @@ function ModuleEditorGUIMain( { windowId } ){
                         hover:bg-red-600 active:bg-red-800 mx-2 px-4 py-1" onClick={()=>{actions.removeGUI(windowId)}}>放弃</button>
                         <button className="bg-sky-600 border-gray-400 rounded-md shadow-md font-semibold text-white 
                         hover:bg-sky-700 active:bg-sky-800 mx-2 px-4 py-1" onClick={()=>{
-                            console.log("当前模块数据：", currentModule);
+                            
                             // 依据端口数量生成端口数组
                             const InputPorts = Array.from({ length: currentModule.Properties.Fixed.InputCount }, (_, i) => ({PortIndex:i}));
                             const OutputPorts = Array.from({ length: currentModule.Properties.Fixed.OutputCount }, (_, i) => ({PortIndex:i}));

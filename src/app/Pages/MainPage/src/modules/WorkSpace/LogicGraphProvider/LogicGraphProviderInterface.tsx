@@ -1,4 +1,5 @@
 import { ModulesDataProps } from "../../ModulesEditor/ModulesEditorProviderInterface";
+import { LogicGraphBackgroundPropsInterface } from "./LogicGraphBackgroundInterface";
 
 interface LogicGraphDynamicProps{
     [key: string]: any;
@@ -109,4 +110,105 @@ export interface LogicGraphProviderInterface {
     Nodes: LogicGraphNodesProp[];
     Edges: LogicGraphEdgesProp[];
     Actions: LogicGraphActions;
+}
+
+
+/*
+ * 工具函数
+ * 用于实现前后端数据格式转换
+*/
+export function convertLogicGraphDataToBackgroundData(data: LogicGraphDataInterface){
+    // 转换节点数据
+    const nodes = data.Nodes.map(node => ({
+        ID: node.ID,
+        Pos: node.GuiProps.Pos,
+        BlockLength: node.NodesData.Properties.Fixed.BlockLength,
+        InputCount: node.NodesData.Properties.Fixed.InputCount,
+        OutputCount: node.NodesData.Properties.Fixed.OutputCount,
+        ComponentType: node.NodesData.Properties.Fixed.ComponentType,
+        ComponentID: node.NodesData.Properties.Fixed.ComponentID,
+        ComponentSettings: {...node.NodesData.Properties.Global, ...node.NodesData.Properties.Local }
+    }));
+
+    // 转换边数据
+    const edges = data.Edges.map(edge => ({
+        EdgeID: edge.EdgeID,
+        StartNodeID: edge.StartNodeID,
+        EndNodeID: edge.EndNodeID,
+        StartEdgeIndex: edge.StartEdgeIndex,
+        EndEdgeIndex: edge.EndEdgeIndex
+    }));
+
+    return {
+        Nodes: nodes,
+        Edges: edges
+    };
+}
+
+/*
+ * 将后端数据转换为前端逻辑流图数据格式
+ * 主要用于将后端传输的数据转换为前端可用的格式
+*/
+
+export function convertBackgroundDataToLogicGraphData(data: LogicGraphBackgroundPropsInterface): LogicGraphDataInterface {
+    // 转换节点数据
+    const nodes: LogicGraphNodesProp[] = data.Nodes.map(node => ({
+        ID: node.ID,
+        GuiProps: {
+            IconSrc: "", // 未来可以根据ComponentID映射到图标
+            Title: node.ComponentID, // 未来可以根据ComponentID映射到标题
+            Type: node.ComponentType,
+            Pos: node.Pos,
+            Ports: {
+                InputPort: Array.from({ length: node.InputCount }, (_, i) => ({ PortIndex: i })),
+                OutputPort: Array.from({ length: node.OutputCount }, (_, i) => ({ PortIndex: i }))
+            }
+        },
+        NodesData: {
+            Type: node.ComponentType,
+            Name: node.ComponentID,
+            Description: "", // 未来可以根据ComponentID映射到描述
+            Properties: {
+                Fixed: {
+                    ProcessMode: "Default", // 默认处理模式
+                    BlockLength: node.BlockLength,
+                    InputCount: node.InputCount,
+                    OutputCount: node.OutputCount,
+                    ComponentType: node.ComponentType,
+                    ComponentID: node.ComponentID
+                },
+                Global: node.ComponentSettings?.SampleRate || {},
+                Local: Object.fromEntries(
+                    Object.entries(node.ComponentSettings || {}).filter(([key]) => key !== 'SampleRate')
+                ) as LogicGraphDynamicProps // 过滤掉SampleRate，保留其他动态属性
+            }
+        }
+    }));
+
+    // 转换边数据
+    const edges = data.Edges.map(edge => ({
+        EdgeID: edge.EdgeID,
+        StartNodeID: edge.StartNodeID,
+        EndNodeID: edge.EndNodeID,
+        StartEdgeIndex: edge.StartEdgeIndex,
+        EndEdgeIndex: edge.EndEdgeIndex
+    }));
+
+    return {
+        Nodes: nodes,
+        Edges: edges,
+        VitrualEdges:{
+            StartNode:{
+                isNodeSet:false,
+                NodeID:-1,
+                EdgeIndex:-1
+            },
+            EndNode:{
+                isNodeSet:false,
+                NodeID:-1,
+                EdgeIndex:-1
+            },
+            Mode:"StartPoint"
+        }
+    };
 }

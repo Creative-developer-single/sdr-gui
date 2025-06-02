@@ -74,6 +74,7 @@ export function LogicGraphNode( { nodeID } ){
     // 查找节点数据
     const nodeData = Nodes.find(node => node.ID === nodeID);
     
+    
     const windowData = {
         id: nodeData?.ID || 0,
         icon: '🧩',
@@ -124,13 +125,14 @@ export function LogicGraphNode( { nodeID } ){
             <FloatWindowWithoutTitle WindowInitialData={windowData} onUpdateStatus={onUpdateStatus} isRelative={true}>
                 <div
                     onContextMenu={(e) => {e.stopPropagation(); e.preventDefault();}} onMouseDown={DeleteNodeByMouseDown} onDoubleClick={(e) =>{
+
                         actions.openEditorGUI({
                             windowId:0,
                             windowMode:'ModulesEditor',
                             type:nodeData?.NodesData.Type || 'Default',
                             width:800,
                             height:500,
-                            ModulesData:nodeData
+                            ModulesData:nodeData?.NodesData
                         });
                     }}
                     className="w-full h-full flex flex-row absolute bg-white">

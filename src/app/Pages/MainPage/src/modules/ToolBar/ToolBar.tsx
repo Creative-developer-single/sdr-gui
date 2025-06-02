@@ -1,9 +1,10 @@
 import {menuItemsConfig} from '../Menu';
 import { useModulesEditor } from '../ModulesEditor/ModulesEditorProvider';
+import { useSimulation } from '../Simulation/SimulationProvider';
 import { useWebController } from '../WebBridge/WebController';
 import { useLogicGraph } from '../WorkSpace/LogicGraphProvider/LogicGraphProvider';
 import { toolbarsConfig } from '././ToolBarSelection';
-import { ToolBarController } from './ToolBarController';
+import { CollectiveContext, ToolBarController } from './Controller/ToolBarController';
 
 
 
@@ -28,11 +29,16 @@ function Toolbar({ activeMenuId ,onStart }) {
     const WebControllerRPCReturnValue = WebControllerContext.rpcReturnValue;
     const WebControllerActions = WebControllerContext.Actions || {};
 
+    // 获取 Simulation 上下文
+    const SimulationContext = useSimulation();
+    const SimulationActions = SimulationContext.Actions || {};   
+
     // 组装上下文对象，便于Controller访问
-    const SharedContext = {
+    const SharedContext:CollectiveContext = {
         ModulesEditor:ModulesEditorContext,
         LogicGraph:LogicGraphContext,
         WebController:WebControllerContext,
+        Simulation:SimulationContext
     }
 
     function createTestWindow(){

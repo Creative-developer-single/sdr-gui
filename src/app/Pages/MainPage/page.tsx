@@ -12,6 +12,11 @@ import { LogicGraphProvider } from './src/modules/WorkSpace/LogicGraphProvider/L
 import { LogicGraphGUI } from './src/modules/WorkSpace/LogicGraphEditor/LogicGraphEditorGUI';
 import { WebSocketProvider } from './src/modules/WebBridge/WebSocket/WebSocketProvider';
 import { WebControllerProvider } from './src/modules/WebBridge/WebController';
+import ConstellationDiagram from './src/modules/ViewModules/Test/TestForScattering';
+import TestConstellation from './src/modules/ViewModules/Test/ScatteringTest';
+import TestConstellationV2 from './src/modules/ViewModules/Test/ConstellationTest';
+import { SimulationProvider } from './src/modules/Simulation/SimulationProvider';
+import { SimulationSettingsGUI } from './src/modules/Simulation/GUI/SimulationSettingsGUI';
 
 // ## 工作区组件 (Workspace)
 function Workspace() {
@@ -72,19 +77,22 @@ function App() {
         <div className="bg-gray-100 h-screen flex flex-col overflow-hidden">
             <WebSocketProvider url={"ws://172.27.234.221:9000/"}>
                 <WebControllerProvider>
-                    <LogicGraphProvider>
-                        <ModulesEditorProvider>
-                        <MenuBar activeItem={activeMenuId} onItemClick={handleMenuItemClick} />
-                        
-                            <Toolbar onStart={onStart} activeMenuId={activeMenuId} />
-                            <ModuleBrouserEditor></ModuleBrouserEditor>
-                            <ModulesEditor></ModulesEditor>
-                        <div className="flex flex-grow overflow-hidden">
-                            <Sidebar />
-                            <LogicGraphGUI></LogicGraphGUI>
-                        </div>
-                        </ModulesEditorProvider>
-                    </LogicGraphProvider>
+                    <SimulationProvider>
+                        <LogicGraphProvider>
+                            <ModulesEditorProvider>
+                            <MenuBar activeItem={activeMenuId} onItemClick={handleMenuItemClick} />
+                                <Toolbar onStart={onStart} activeMenuId={activeMenuId} />
+                                <ModuleBrouserEditor></ModuleBrouserEditor>
+                                <ModulesEditor></ModulesEditor>
+                                <SimulationSettingsGUI></SimulationSettingsGUI>
+                            <div className="flex flex-grow overflow-hidden">
+                                <Sidebar />
+                                <LogicGraphGUI></LogicGraphGUI>
+                                <TestConstellationV2></TestConstellationV2>
+                            </div>
+                            </ModulesEditorProvider>
+                        </LogicGraphProvider>
+                    </SimulationProvider>
                 </WebControllerProvider>
             </WebSocketProvider>
             

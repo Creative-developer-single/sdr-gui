@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useState } from "react";
 import { ModulesList } from "../ModulesLib/ModulesList";
-import { ModulesData, ModulesEditorProviderInterface } from "./ModulesEditorProviderInterface";
+import { ModulesData, ModulesDataProps, ModulesEditorProviderInterface } from "./ModulesEditorProviderInterface";
 import { UpdateStatusInterface } from "../FloatWindow/FloatWindowPropInterface";
 
 //Context for ModulesEditor
@@ -86,14 +86,22 @@ export function ModulesEditorProvider({ children }) {
         return newWindow;
     }*/
 
-    const openEditorGUI = useCallback((preLoadData) => {
+    interface PreloadData{
+        windowId: number; // 窗口ID，0表示新建窗口
+        windowMode: string; // 窗口模式，例如 'ModulesBrouser' 或 'ModulesEditor'
+        type: string; // 预加载的类型，例如模块组名称
+        width: number; // 窗口宽度
+        height: number; // 窗口高度
+        ModulesData?: ModulesDataProps
+    }
+
+    const openEditorGUI = useCallback((preLoadData:PreloadData)  => {
         //获取当前窗口请求id，若为0，则视为新建窗口，合法窗口id为1-n
         const windowId = preLoadData.windowId;
         const windowMode = preLoadData.windowMode;
         const preloadType = preLoadData.type;
         const preloadWidth = preLoadData.width;
         const preloadHeight = preLoadData.height;
-        console.log(typeof(windowId));
         
         //检查id，并新建窗口或已有窗口
         if (windowId == 0){
@@ -132,11 +140,7 @@ export function ModulesEditorProvider({ children }) {
                 }
             }else{
                 // 如果不是模块浏览器，则为模块编辑器
-                // 查找ModulesList和ModulesData相同的模块
-                const moduleGet = ModulesList.find(item => item.GroupName === preLoadData.ModulesData.GuiProps.Type)?.Modules.find(
-                    item => item.Name === preLoadData.ModulesData.ComponentType
-                );
-
+                //如果没有找到模块，则使用默认模块
                 const newWindow:ModulesData = {
                     GuiProps:{
                         id: Math.max(...modulesData.map(item => item.GuiProps.id)) + 1,
@@ -147,25 +151,7 @@ export function ModulesEditorProvider({ children }) {
                         height: preloadHeight,
                         mode: 'ModulesEditor',
                     },
-                    ModulesData:{
-                        Type:preLoadData.ModulesData.GuiProps.Type,
-                        Name:preLoadData.ModulesData.GuiProps.Title,
-                        Description:moduleGet?.Description || '这是一个模块编辑器',
-                        Properties:{
-                            Fixed:{
-                                ProcessMode:moduleGet?.Properties.Fixed.ProcessMode || 'block',
-                                BlockLength:preLoadData.ModulesData.BlockLength || moduleGet?.Properties.Fixed.BlockLength || 1024,
-                                InputCount:preLoadData.ModulesData.InputCount || moduleGet?.Properties.Fixed.InputCount || 1,
-                                OutputCount:preLoadData.ModulesData.OutputCount || moduleGet?.Properties.Fixed.OutputCount || 1,
-                                ComponentType:preLoadData.ModulesData.ComponentType || moduleGet?.Properties.Fixed.ComponentType || 'default.defaultModule',
-                                ComponentID:preLoadData.ModulesData.ComponentID || moduleGet?.Properties.Fixed.ComponentID || 'default0'
-                            },
-                            Global:moduleGet?.Properties.Global || {
-                                SampleRate:10000,
-                            },
-                            Local:preLoadData.ModulesData.ComponentSettings || {}
-                        }
-                    }
+                    ModulesData:preLoadData.ModulesData? preLoadData.ModulesData : ModulesList[0].Modules[0]
                 }
                 console.log("新建窗口数据：", newWindow);
                 //添加新窗口

@@ -1,10 +1,13 @@
-import { ModulesEditorActions, ModulesEditorProviderInterface } from "../ModulesEditor/ModulesEditorProviderInterface";
-import { WebControllerInterface } from "../WebBridge/WebControllerInterface";
-import { LogicGraphProviderInterface } from "../WorkSpace/LogicGraphProvider/LogicGraphProviderInterface";
+import { ModulesEditorActions, ModulesEditorProviderInterface } from "../../ModulesEditor/ModulesEditorProviderInterface";
+import { SimulationProviderInterface } from "../../Simulation/SimulationInterface";
+import { WebControllerInterface } from "../../WebBridge/WebControllerInterface";
+import { LogicGraphProviderInterface } from "../../WorkSpace/LogicGraphProvider/LogicGraphProviderInterface";
+import { ToolBarOpenSimulationSettingsGUI } from "./Simulation/ToolBarSimulationController";
 
-interface CollectiveContext {
+export interface CollectiveContext {
     ModulesEditor: ModulesEditorProviderInterface,
     LogicGraph: LogicGraphProviderInterface,
+    Simulation: SimulationProviderInterface,
     WebController: WebControllerInterface
 }
 
@@ -38,6 +41,9 @@ function ToolBarSimulationManager( item,context:CollectiveContext ){
     switch(item.id){
         case "VerifyGraph":
             context.WebController.Actions.RPCModifyLogicGrapWithoutReply(context.LogicGraph.Actions.getLogicGraphData());
+            break;
+        case "SimulationSetting":
+            ToolBarOpenSimulationSettingsGUI(context);
             break;
         default:
             console.warn(`未处理的模拟管理器项: ${item.id}`);
