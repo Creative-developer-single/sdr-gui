@@ -3,6 +3,16 @@ import { ModulesList } from "../ModulesLib/ModulesList";
 import { ModulesData, ModulesDataProps, ModulesEditorProviderInterface } from "./ModulesEditorProviderInterface";
 import { UpdateStatusInterface } from "../FloatWindow/FloatWindowPropInterface";
 
+export interface PreloadData{
+    windowId: number; // 窗口ID，0表示新建窗口
+    windowMode: string; // 窗口模式，例如 'ModulesBrouser' 或 'ModulesEditor'
+    type: string; // 预加载的类型，例如模块组名称
+    width: number; // 窗口宽度
+    height: number; // 窗口高度
+    ModulesData?: ModulesDataProps,
+    bindNodeID:number, // 绑定的节点ID
+}
+
 //Context for ModulesEditor
 const modulesEditorContext = createContext<ModulesEditorProviderInterface | null>(null);
 
@@ -28,6 +38,7 @@ export function ModulesEditorProvider({ children }) {
                 mode:'ModulesBrouser',
             },
             ModulesData:{
+                Id:0,
                 Type:'default',
                 Name:'defaultModule',
                 Description:'这是一个默认模块',
@@ -86,14 +97,7 @@ export function ModulesEditorProvider({ children }) {
         return newWindow;
     }*/
 
-    interface PreloadData{
-        windowId: number; // 窗口ID，0表示新建窗口
-        windowMode: string; // 窗口模式，例如 'ModulesBrouser' 或 'ModulesEditor'
-        type: string; // 预加载的类型，例如模块组名称
-        width: number; // 窗口宽度
-        height: number; // 窗口高度
-        ModulesData?: ModulesDataProps
-    }
+    
 
     const openEditorGUI = useCallback((preLoadData:PreloadData)  => {
         //获取当前窗口请求id，若为0，则视为新建窗口，合法窗口id为1-n
@@ -125,12 +129,15 @@ export function ModulesEditorProvider({ children }) {
                         mode: windowMode,
                         },
                         ModulesData: {
+                            Id: preLoadData.bindNodeID || 0, // 绑定的节点ID
                             Type: preloadType,
                             Name: moduleInfo.Name,
                             Description: moduleInfo.Description,
                             Properties: moduleInfo.Properties
                         }
                     };
+                    console.log("PreloadData: ", preLoadData);
+                    console.log("新建窗口数据：", newWindow);
                     //添加新窗口
                     setModulesData((prevState) => {
                         return [...prevState, newWindow];
@@ -151,7 +158,25 @@ export function ModulesEditorProvider({ children }) {
                         height: preloadHeight,
                         mode: 'ModulesEditor',
                     },
-                    ModulesData:preLoadData.ModulesData? preLoadData.ModulesData : ModulesList[0].Modules[0]
+                    // 补全ID，其余直接传递参数
+                    ModulesData:{
+                        Id: preLoadData.bindNodeID || 0, // 绑定的节点ID
+                        Type: preloadType,
+                        Name: preLoadData.ModulesData?.Name || '未命名模块',
+                        Description: preLoadData.ModulesData?.Description || '这是一个新建模块',
+                        Properties: {
+                            Fixed: {
+                                ProcessMode: 'block',
+                                BlockLength: 1024,
+                                InputCount: 1,
+                                OutputCount: 1,
+                                ComponentType: `${preloadType}.${preLoadData.ModulesData?.Name || 'defaultModule'}`,
+                                ComponentID: `default${Math.floor(Math.random() * 1000)}` // 随机生成一个ComponentID
+                            },
+                            Global: preLoadData.ModulesData?.Properties?.Global || { SampleRate: 10000 },
+                            Local: preLoadData.ModulesData?.Properties?.Local || { mode: 'default' }
+                        }
+                    }
                 }
                 console.log("新建窗口数据：", newWindow);
                 //添加新窗口

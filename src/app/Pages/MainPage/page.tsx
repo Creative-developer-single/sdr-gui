@@ -11,12 +11,16 @@ import { ModulesEditorProvider } from './src/modules/ModulesEditor/ModulesEditor
 import { LogicGraphProvider } from './src/modules/WorkSpace/LogicGraphProvider/LogicGraphProvider';
 import { LogicGraphGUI } from './src/modules/WorkSpace/LogicGraphEditor/LogicGraphEditorGUI';
 import { WebSocketProvider } from './src/modules/WebBridge/WebSocket/WebSocketProvider';
-import { WebControllerProvider } from './src/modules/WebBridge/WebController';
+import { WebControllerProvider } from './src/modules/WebBridge/WebController/WebController';
 import ConstellationDiagram from './src/modules/ViewModules/Test/TestForScattering';
 import TestConstellation from './src/modules/ViewModules/Test/ScatteringTest';
 import TestConstellationV2 from './src/modules/ViewModules/Test/ConstellationTest';
 import { SimulationProvider } from './src/modules/Simulation/SimulationProvider';
 import { SimulationSettingsGUI } from './src/modules/Simulation/GUI/SimulationSettingsGUI';
+import SimulationStatusBar from './src/modules/Simulation/GUI/SimulationStatusBar';
+import { ViewModuleProvider } from './src/modules/ViewModules/Provider/ViewModuleProvider';
+import { DataSyncProvider } from './src/modules/DataSync/Provider/DataSyncProvider';
+import { ViewModulesGUI } from './src/modules/ViewModules/GUI/ViewModulesGUI';
 
 // ## 工作区组件 (Workspace)
 function Workspace() {
@@ -80,16 +84,22 @@ function App() {
                     <SimulationProvider>
                         <LogicGraphProvider>
                             <ModulesEditorProvider>
-                            <MenuBar activeItem={activeMenuId} onItemClick={handleMenuItemClick} />
-                                <Toolbar onStart={onStart} activeMenuId={activeMenuId} />
-                                <ModuleBrouserEditor></ModuleBrouserEditor>
-                                <ModulesEditor></ModulesEditor>
-                                <SimulationSettingsGUI></SimulationSettingsGUI>
-                            <div className="flex flex-grow overflow-hidden">
-                                <Sidebar />
-                                <LogicGraphGUI></LogicGraphGUI>
-                                <TestConstellationV2></TestConstellationV2>
-                            </div>
+                                <ViewModuleProvider>
+                                    <DataSyncProvider>
+                                        <MenuBar activeItem={activeMenuId} onItemClick={handleMenuItemClick} />
+                                            <Toolbar onStart={onStart} activeMenuId={activeMenuId} />
+                                            <ModuleBrouserEditor></ModuleBrouserEditor>
+                                            <ModulesEditor></ModulesEditor>
+                                            <SimulationSettingsGUI></SimulationSettingsGUI>
+                                            <SimulationStatusBar></SimulationStatusBar>
+                                        <div className="flex flex-grow overflow-hidden">
+                                            <Sidebar />
+                                            <LogicGraphGUI></LogicGraphGUI>
+                                            <ViewModulesGUI></ViewModulesGUI>
+                                            {/*<TestConstellationV2></TestConstellationV2>*/}
+                                        </div>
+                                    </DataSyncProvider>
+                                </ViewModuleProvider>
                             </ModulesEditorProvider>
                         </LogicGraphProvider>
                     </SimulationProvider>

@@ -81,6 +81,9 @@ interface LogicGraphActions{
     addEdge: (edge: LogicGraphEdgesProp) => void;
     removeEdge: (edgeID: number) => void;
     updateEdge: (edgeID: number, updates: Partial<LogicGraphEdgesProp>) => void;
+    updateGlobalProps: (key:string,value:any) => void;
+    updateFixedProps: (key:string,value:any) => void;
+    updateNodes:(nodes: LogicGraphNodesProp[]) => void;
     getLogicGraphData: () => LogicGraphDataInterface;
 }
 
@@ -165,6 +168,7 @@ export function convertBackgroundDataToLogicGraphData(data: LogicGraphBackground
             }
         },
         NodesData: {
+            Id: node.ID,
             Type: node.ComponentType,
             Name: node.ComponentID,
             Description: "", // 未来可以根据ComponentID映射到描述

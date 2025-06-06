@@ -1,25 +1,25 @@
-export const DataBufferModules = {
+export const VisualModules = {
     "Modules": [
       {
         "Id":0,
-        "Type": "DataBuffer",
-        "Name": "SinglePortBuffer",
-        "Description": "单端口数据缓冲区",
+        "Type": "Visual",
+        "Name": "Oscilloscope",
+        "Description": "示波器",
         "Properties": {
           "Fixed": {
             "ProcessMode": "block",
             "BlockLength": 1024,
             "InputCount": 1,
             "OutputCount": 1,
-            "ComponentID": "Buffer1",
-            "ComponentType": "Others.DataBuffer.SinglePortBuffer"
+            "ComponentID": "Sin1",
+            "ComponentType": "Visual.Oscilloscope"
           },
           "Global": {
             "SampleRate": 48000,
           },
           "Local": {
-            "ComponentID": "Buffer1",
-            "bufferLength": 4096,
+            "bufferLength": 512,
+            "DataType":"Real"
           }
         }
       }

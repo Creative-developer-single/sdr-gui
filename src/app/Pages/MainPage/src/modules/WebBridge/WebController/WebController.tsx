@@ -1,8 +1,11 @@
 import { useContext, useState } from "react";
-import { convertLogicGraphDataToBackgroundData, LogicGraphDataInterface } from "../WorkSpace/LogicGraphProvider/LogicGraphProviderInterface";
+import { convertLogicGraphDataToBackgroundData, LogicGraphDataInterface } from "../../WorkSpace/LogicGraphProvider/LogicGraphProviderInterface";
 import { RPCFrameInterface, WebControllerInterface } from "./WebControllerInterface";
-import { useWebSocket } from "./WebSocket/WebSocketProvider";
+import { useWebSocket } from "../WebSocket/WebSocketProvider";
 import { createContext } from "react";
+import { RPCModifySimultionStatus, RPCSetSimulationParameter } from "./SimulationController/WebSimulationController";
+import { DataSyncGetNodesDataProps } from "../../DataSync/Provider/DataSyncInterface";
+import { WebSocketInterface } from "../WebSocket/WebSocketInterface";
 
 const WebControllerContext = createContext<WebControllerInterface | null>(null);
 
@@ -63,11 +66,30 @@ export function WebControllerProvider( {children} ){
         )
     }
 
+    async function RPCGetNodesData( Nodes:DataSyncGetNodesDataProps){
+        const newRPCFrame:RPCFrameInterface = {
+            RPCFrame:{
+                TargetModule: "LogicGraph",
+                Command: "RPCGetNodeAns",
+                Args: Nodes,
+                return: "BinaryObject"
+            }
+        }
+
+        console.log("SendString:", JSON.stringify(newRPCFrame));
+
+        const response = await webSocketContext.Actions.SendCommandWithReply(newRPCFrame);
+        return response.Data;
+    }
+
     const contextValue:WebControllerInterface = {
         rpcReturnValue: rpcReturnValue,
         Actions: {
             RPCModifyLogicGraph: RPCModifyLogicGraph,
-            RPCModifyLogicGrapWithoutReply: RPCModifyLogicGraphWithoutReply
+            RPCModifyLogicGrapWithoutReply: RPCModifyLogicGraphWithoutReply,
+            RPCModifySimulationStatus:RPCModifySimultionStatus,
+            RPCSetSimulationParameter:RPCSetSimulationParameter,
+            RPCGetNodesData: RPCGetNodesData
         }
     }
 

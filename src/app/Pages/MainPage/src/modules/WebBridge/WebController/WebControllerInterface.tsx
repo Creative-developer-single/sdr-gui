@@ -1,4 +1,6 @@
-import { LogicGraphDataInterface } from "../WorkSpace/LogicGraphProvider/LogicGraphProviderInterface";
+import { DataSyncGetNodesDataProps } from "../../DataSync/Provider/DataSyncInterface";
+import { LogicGraphDataInterface } from "../../WorkSpace/LogicGraphProvider/LogicGraphProviderInterface";
+import { WebSocketInterface } from "../WebSocket/WebSocketInterface";
 
 interface DynamicProps{
     [key: string]: any;
@@ -14,6 +16,9 @@ interface RPCFrameItemInterface{
 interface RPCActionsInterface{
     RPCModifyLogicGraph( logicGraph: LogicGraphDataInterface ): void;
     RPCModifyLogicGrapWithoutReply( logicGraph: LogicGraphDataInterface ): void;
+    RPCModifySimulationStatus( status: string,webSocketContext:WebSocketInterface ): Promise<any>;
+    RPCSetSimulationParameter( props: DynamicProps, webSocketContext: WebSocketInterface ): Promise<any>;
+    RPCGetNodesData( Nodes: DataSyncGetNodesDataProps ): Promise<any>;
 }
 
 export interface RPCFrameInterface{

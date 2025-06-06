@@ -16,7 +16,9 @@ export function SimulationProvider( {children} ){
     const defaultSimulationProps: SimulationProps = {
         SimulationMode: 'default', // 默认仿真模式
         SimulationTime: 5, // 默认仿真时间(s)
-        SimulationTimeStep: 0.001 // 默认仿真时间步长(s)
+        SimulationTimeStep: 0.001, // 默认仿真时间步长(s)
+        SimulationSampleRate: 5000, // 默认仿真采样率(Hz)
+        SimulationPerFrameTime:0.1 // 每帧长度
     }
 
     // 默认仿真状态
@@ -80,7 +82,18 @@ export function SimulationProvider( {children} ){
 
     // 仿真状态
     const StartSimulation = useCallback(() =>{
+        // 检查仿真参数是否有效
+        if (!simulationProps || simulationProps.SimulationTime <= 0 || simulationProps.SimulationTimeStep <= 0) {
+            console.error("仿真参数无效，无法开始仿真");
+            return;
+        }
 
+        // 更新仿真状态,仅改变状态，不改变时间
+        setSimulationState(prevState => ({
+            ...prevState,
+            State: 'running'
+        }));
+        console.log("开始仿真");
     },[]);
 
     // 暂停仿真
@@ -89,7 +102,12 @@ export function SimulationProvider( {children} ){
 
     // 停止仿真
     const StopSimulation = useCallback(() =>{
-
+        // 更新仿真状态为停止
+        setSimulationState(prevState => ({
+            ...prevState,
+            State:"stopped"
+        }))
+        console.log("停止仿真");
     },[]);
 
     // 验证仿真参数

@@ -1,14 +1,20 @@
+import { DataSyncProviderInterface } from "../../DataSync/Provider/DataSyncInterface";
 import { ModulesEditorActions, ModulesEditorProviderInterface } from "../../ModulesEditor/ModulesEditorProviderInterface";
 import { SimulationProviderInterface } from "../../Simulation/SimulationInterface";
-import { WebControllerInterface } from "../../WebBridge/WebControllerInterface";
+import { ViewModuleProviderInterface } from "../../ViewModules/Provider/ViewModuleInterface";
+import { WebControllerInterface } from "../../WebBridge/WebController/WebControllerInterface";
+import { WebSocketInterface } from "../../WebBridge/WebSocket/WebSocketInterface";
 import { LogicGraphProviderInterface } from "../../WorkSpace/LogicGraphProvider/LogicGraphProviderInterface";
-import { ToolBarOpenSimulationSettingsGUI } from "./Simulation/ToolBarSimulationController";
+import { ToolBarModifySimulationStatus, ToolBarOpenSimulationSettingsGUI } from "./Simulation/ToolBarSimulationController";
 
 export interface CollectiveContext {
     ModulesEditor: ModulesEditorProviderInterface,
     LogicGraph: LogicGraphProviderInterface,
     Simulation: SimulationProviderInterface,
-    WebController: WebControllerInterface
+    WebController: WebControllerInterface,
+    DataSyncContext:DataSyncProviderInterface,
+    WebSocketContext:WebSocketInterface,
+    ViewModulesContext:ViewModuleProviderInterface
 }
 
 function ToolBarFileManager( item,context:CollectiveContext )
@@ -30,7 +36,8 @@ function ToolBarOpenModulesEditor( preloadType,actions:ModulesEditorActions ){
         windowMode: 'ModulesBrouser',
         type: preloadType,
         width: 800,
-        height: 500
+        height: 500,
+        bindNodeID: 0,
     };
 
     actions.openEditorGUI(preLoadData);
@@ -41,10 +48,16 @@ function ToolBarSimulationManager( item,context:CollectiveContext ){
     switch(item.id){
         case "VerifyGraph":
             context.WebController.Actions.RPCModifyLogicGrapWithoutReply(context.LogicGraph.Actions.getLogicGraphData());
+            context.ViewModulesContext.Actions.GenerateViewModules();
             break;
         case "SimulationSetting":
             ToolBarOpenSimulationSettingsGUI(context);
             break;
+        case "runSimulation":
+            ToolBarModifySimulationStatus(context);
+            break;
+        case "generateReport":
+            context.DataSyncContext.Actions.getNodesData();
         default:
             console.warn(`未处理的模拟管理器项: ${item.id}`);
             break;

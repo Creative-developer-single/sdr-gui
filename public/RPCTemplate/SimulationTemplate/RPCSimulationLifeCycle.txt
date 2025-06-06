@@ -1,0 +1,12 @@
+CTRL
+{
+  "command": {
+    "RPCFrame": {
+      "TargetModule": "Simulation",
+      "Command": "RPCStartSimulation",
+      "Args": {},
+      "return": "Null"
+    }
+  },
+  "id": 0
+}

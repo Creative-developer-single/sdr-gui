@@ -1,7 +1,10 @@
+import { useDataSync } from '../DataSync/Provider/DataSyncProvider';
 import {menuItemsConfig} from '../Menu';
 import { useModulesEditor } from '../ModulesEditor/ModulesEditorProvider';
 import { useSimulation } from '../Simulation/SimulationProvider';
-import { useWebController } from '../WebBridge/WebController';
+import { useViewModule } from '../ViewModules/Provider/ViewModuleProvider';
+import { useWebController } from '../WebBridge/WebController/WebController';
+import { useWebSocket } from '../WebBridge/WebSocket/WebSocketProvider';
 import { useLogicGraph } from '../WorkSpace/LogicGraphProvider/LogicGraphProvider';
 import { toolbarsConfig } from '././ToolBarSelection';
 import { CollectiveContext, ToolBarController } from './Controller/ToolBarController';
@@ -33,12 +36,24 @@ function Toolbar({ activeMenuId ,onStart }) {
     const SimulationContext = useSimulation();
     const SimulationActions = SimulationContext.Actions || {};   
 
+    // 获取DataSync 上下文
+    const DataSyncContext = useDataSync();
+
+    // 获取WebSocket 上下文
+    const WebSocketContext =  useWebSocket();
+
+    // 获取ViewModules 上下文
+    const ViewModulesContext = useViewModule();
+
     // 组装上下文对象，便于Controller访问
     const SharedContext:CollectiveContext = {
         ModulesEditor:ModulesEditorContext,
         LogicGraph:LogicGraphContext,
         WebController:WebControllerContext,
-        Simulation:SimulationContext
+        Simulation:SimulationContext,
+        DataSyncContext:DataSyncContext,
+        WebSocketContext:WebSocketContext,
+        ViewModulesContext:ViewModulesContext,
     }
 
     function createTestWindow(){
@@ -48,7 +63,8 @@ function Toolbar({ activeMenuId ,onStart }) {
                 windowMode:'ModulesBrouser',
                 type:'Default',
                 width:800,
-                height:500
+                height:500,
+                bindNodeID:0,
             }
         )
     }

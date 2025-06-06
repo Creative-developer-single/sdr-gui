@@ -6,8 +6,12 @@ import { ModulesDataProps } from "./ModulesEditorProviderInterface";
 import { useLogicGraph } from "../WorkSpace/LogicGraphProvider/LogicGraphProvider";
 import { LogicGraphNodesProp } from "../WorkSpace/LogicGraphProvider/LogicGraphProviderInterface";
 import { LogicGraphShownNode } from "../WorkSpace/LogicGraphEditor/LogicGraphNode/LogicGraphNode";
+import { smartParse } from "../Tools/SmartParse";
 
-function SelectedModuleEditorGUIMain( { windowId } ){
+function SelectedModuleEditorGUIMain( { windowId,currentNode } : {
+    windowId:number,
+    currentNode?:LogicGraphNodesProp
+} ){
     // 获取模块编辑器的上下文
     const { modulesData,actions } = useModulesEditor();
 
@@ -18,11 +22,14 @@ function SelectedModuleEditorGUIMain( { windowId } ){
 
     // 获取当前窗口数据
     const windowData = modulesData.find(window => window.GuiProps.id === windowId);
-    console.log("当前选择窗口数据：", windowData);
     
+    // 根据当前窗口绑定的ID寻找当前选中的模块数据
+    const currentBindData = LogicNodes.find(node => node.ID === windowData?.ModulesData.Id);
+
+    console.log("当前绑定的模块数据：", currentBindData);
 
     // 定义当前选定的模块信息结构
-    const [currentModule,setCurrentModuleData] = useState<ModulesDataProps>(windowData?.ModulesData || ModulesList[1].Modules[1]);
+    const [currentModule,setCurrentModuleData] = useState<ModulesDataProps>(currentBindData?.NodesData || ModulesList[1].Modules[1]);
 
     // 分类和模块名
     const activeType = windowData?.ModulesData.Type || 'Default'; // 当前选中的分类类型
@@ -87,7 +94,7 @@ function SelectedModuleEditorGUIMain( { windowId } ){
                                     <form key={key} className="flex flex-col w-1/2 p-2 rounded-md bg-white border-gray-300">
                                         <label className="font-medium text-sm text-black">{ModulesListAlias[key]}</label>
                                         <input id={key} className="px-1 py-1 text-xs text-gray-600 border-gray-300 rounded-md shadow-md" type="text" value={String(value)} onChange={(e)=>{
-                                            const newValue = e.target.value;
+                                            const newValue = smartParse(e.target.value);
                                             setCurrentModuleData((prevModule) => ({
                                                 ...prevModule,
                                                 Properties: {
@@ -112,7 +119,7 @@ function SelectedModuleEditorGUIMain( { windowId } ){
                                     <form key={key} className="flex flex-col w-1/2 p-2 rounded-md bg-white border-gray-300">
                                         <label className="font-medium text-sm text-black">{ModulesListAlias[key]}</label>
                                         <input id={key} className="px-1 py-1 text-xs text-gray-600 border-gray-300 rounded-md shadow-md" type="text" value={String(value)} onChange={(e)=>{
-                                            const newValue = e.target.value;
+                                            const newValue = smartParse(e.target.value);
                                             setCurrentModuleData((prevModule) => ({
                                                 ...prevModule,
                                                 Properties: {
@@ -136,7 +143,7 @@ function SelectedModuleEditorGUIMain( { windowId } ){
                                     <form key={key} className="flex flex-col w-1/2 p-2 rounded-md bg-white border-gray-300">
                                         <label className="font-medium text-sm text-black">{ModulesListAlias[key]}</label>
                                         <input id={key} className="px-1 py-1 text-xs text-gray-600 border-gray-300 rounded-md shadow-md" type="text" value={String(value)} onChange={(e)=>{
-                                            const newValue = e.target.value;
+                                            const newValue = smartParse(e.target.value);
                                             setCurrentModuleData((prevModule) => ({
                                                 ...prevModule,
                                                 Properties: {
@@ -158,20 +165,19 @@ function SelectedModuleEditorGUIMain( { windowId } ){
                         hover:bg-red-600 active:bg-red-800 mx-2 px-4 py-1" onClick={()=>{actions.removeGUI(windowId)}}>放弃</button>
                         <button className="bg-sky-600 border-gray-400 rounded-md shadow-md font-semibold text-white 
                         hover:bg-sky-700 active:bg-sky-800 mx-2 px-4 py-1" onClick={()=>{
-                            console.log("当前模块数据：", currentModule);
                             // 依据端口数量生成端口数组
                             const InputPorts = Array.from({ length: currentModule.Properties.Fixed.InputCount }, (_, i) => ({PortIndex:i}));
                             const OutputPorts = Array.from({ length: currentModule.Properties.Fixed.OutputCount }, (_, i) => ({PortIndex:i}));
 
                             const newNode:LogicGraphNodesProp = {
-                                ID:0,
+                                ID:currentBindData?.ID || 0,
                                 GuiProps:{
                                     IconSrc:'../imgs/alu.png',
                                     Title:currentModule.Name,
                                     Type:currentModule.Name,
                                     Pos:{
-                                        X:0,
-                                        Y:0
+                                        X:currentBindData?.GuiProps.Pos.X || 0,
+                                        Y:currentBindData?.GuiProps.Pos.Y || 0
                                     },
                                     Ports:{
                                         InputPort: InputPorts,
@@ -181,6 +187,8 @@ function SelectedModuleEditorGUIMain( { windowId } ){
                                 NodesData:currentModule
                             }
                             LogicGraphActions.updateNode(newNode.ID,newNode);
+                            console.log("节点数据:",LogicNodes);
+                            console.log("新节点数据：", newNode);
                         }}>应用配置</button>
                 </div>
                 </div>

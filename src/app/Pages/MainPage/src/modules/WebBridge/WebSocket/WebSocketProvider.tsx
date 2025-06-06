@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react';
-import { WebSocketInterface } from './WebSocketInterface';
+import { WebSocketCtrlReply, WebSocketInterface } from './WebSocketInterface';
 
 const WebSocketContext = createContext<WebSocketInterface | null>(null);
 
@@ -9,183 +9,214 @@ export const useWebSocket = () => {
         throw new Error("useWebSocket must be used within a WebSocketProvider");
     }
     return context;
-}
+};
 
 export function WebSocketProvider({ url, children }) {
-  const wsRef = useRef<WebSocket | null>(null);
-  const idRef = useRef(0);
-  const pendingCommands = useRef(new Map());
-  const reconnectTimer = useRef<number | null>(null); // 自动重连定时器
-  const isManuallyClosed = useRef(false); // 是否是手动关闭（避免 unmount 后继续重连）
+    const wsRef = useRef<WebSocket | null>(null);
+    const idRef = useRef(0);
+    const pendingCommands = useRef(new Map());
+    const reconnectTimer = useRef<number | null>(null);
+    const isManuallyClosed = useRef(false);
 
-  const [status, setStatus] = useState('connecting');
+    const [status, setStatus] = useState('connecting');
 
-  const connect = useCallback(() => {
-    if (wsRef.current && (wsRef.current.readyState === WebSocket.OPEN || wsRef.current.readyState === WebSocket.CONNECTING)) {
-      // 已经有连接，不重复连接
-      return;
-    }
-
-    console.log("WebSocket connecting to:", url);
-    const ws = new WebSocket(url);
-    ws.binaryType = 'arraybuffer';
-    wsRef.current = ws;
-
-    ws.onopen = () => {
-      console.log("WebSocket connected");
-      setStatus('online');
-      if (reconnectTimer.current) {
-        clearTimeout(reconnectTimer.current);
-        reconnectTimer.current = null;
-      }
-    };
-
-    const scheduleReconnect = () => {
-      if (isManuallyClosed.current) {
-        console.log("WebSocket manually closed, skip auto-reconnect");
-        return;
-      }
-      if (!reconnectTimer.current) {
-        console.log("WebSocket disconnected, attempting to reconnect in 3 seconds...");
-        reconnectTimer.current = window.setTimeout(() => {
-          connect();
-        }, 3000); // 3秒后尝试重连
-      }
-    };
-
-    ws.onclose = () => {
-      console.warn("WebSocket closed");
-      setStatus('offline');
-      scheduleReconnect();
-    };
-
-    ws.onerror = (err) => {
-      console.error("WebSocket error", err);
-      setStatus('offline');
-      ws.close(); // 触发 onclose，避免僵尸连接
-    };
-
-    function isEqual(a: Uint8Array, b: Uint8Array) {
-      return a.length === b.length && a.every((value, index) => value === b[index]);
-    }
-
-    ws.onmessage = (event) => {
-      try {
-        const message = event.data;
-        const messageBytes = new Uint8Array(message);
-
-        if (messageBytes.length < 4) {
-          console.warn("Received message too short:", message);
-          return;
-        } else {
-          const messagePrefix = messageBytes.slice(0, 4);
-
-          if (isEqual(messagePrefix, new Uint8Array([0x43, 0x54, 0x52, 0x4C]))) {
-            const jsonString = new TextDecoder().decode(messageBytes.slice(4));
-            const parsedMessage = JSON.parse(jsonString);
-
-            const id = parsedMessage.id;
-            if (id && pendingCommands.current.has(id)) {
-              pendingCommands.current.get(id).resolve({
-                ID: id,
-                Data: parsedMessage.data,
-                Type: "CTRL"
-              });
-              pendingCommands.current.delete(id);
-            }
+    const connect = useCallback(() => {
+        if (wsRef.current && (wsRef.current.readyState === WebSocket.OPEN || wsRef.current.readyState === WebSocket.CONNECTING)) {
             return;
-          } else if (isEqual(messagePrefix, new Uint8Array([0x44, 0x41, 0x54, 0x41]))) {
-            const idBytes = messageBytes.slice(4, 8);
-            const id = new DataView(idBytes.buffer).getUint32(0, false);
+        }
 
-            if (id && pendingCommands.current.has(id)) {
-              const resolve = pendingCommands.current.get(id).resolve;
-              const data = messageBytes.slice(8);
-              resolve({
-                ID: id,
-                Data: data,
-                Type: "DATA"
-              });
-              pendingCommands.current.delete(id);
-            } else {
-              console.warn("Unmatched DATA message with ID:", id);
+        console.log("WebSocket connecting to:", url);
+        const ws = new WebSocket(url);
+        ws.binaryType = 'arraybuffer';
+        wsRef.current = ws;
+
+        ws.onopen = () => {
+            console.log("WebSocket connected");
+            setStatus('online');
+            if (reconnectTimer.current) {
+                clearTimeout(reconnectTimer.current);
+                reconnectTimer.current = null;
             }
-          }
+        };
+
+        ws.onclose = () => {
+            console.warn("WebSocket closed");
+            setStatus('offline');
+            // 不 scheduleReconnect，等待 SendCommand 主动触发重连
+        };
+
+        ws.onerror = (err) => {
+            console.error("WebSocket error", err);
+            setStatus('offline');
+            ws.close();
+        };
+
+        function isEqual(a: Uint8Array, b: Uint8Array) {
+            return a.length === b.length && a.every((value, index) => value === b[index]);
         }
-      } catch (e) {
-        console.error("Failed to parse WebSocket message", e);
-      }
-    };
-  }, [url]);
 
-  useEffect(() => {
-    isManuallyClosed.current = false;
-    connect();
+        function processMessage(messageBytes) {
+            console.log("Received WebSocket message:", messageBytes);
 
-    return () => {
-      isManuallyClosed.current = true;
-      if (reconnectTimer.current) {
-        clearTimeout(reconnectTimer.current);
-      }
-      wsRef.current?.close();
-      pendingCommands.current.clear();
-    };
-  }, [connect]);
+            if (messageBytes.length < 4) {
+                console.warn("Received message too short:", messageBytes);
+                return;
+            }
 
-  const SendCommandWithReply = useCallback((command) => {
-    function getNextId() {
-      idRef.current = (Math.random() * 4294967290) % 0xFFFFFFFF;
-      return Math.floor(idRef.current);
-    }
+            const messagePrefix = messageBytes.slice(0, 4);
 
-    const id = getNextId();
-    const message = { command, id };
+            if (isEqual(messagePrefix, new Uint8Array([0x43, 0x54, 0x52, 0x4C]))) { // 'CTRL'
+                const jsonString = new TextDecoder().decode(messageBytes.slice(4));
+                const parsedMessage = JSON.parse(jsonString);
 
-    return new Promise((resolve, reject) => {
-      if (wsRef.current?.readyState !== WebSocket.OPEN) {
-        return reject(new Error("WebSocket not connected"));
-      }
+                const id = parsedMessage.RPCFrame?.FrameID;
 
-      pendingCommands.current.set(id, { resolve, reject });
-      wsRef.current.send("CTRL" + JSON.stringify(message));
+                if (!id) {
+                    console.warn("Received CTRL message without FrameID:", parsedMessage);
+                    return;
+                }
 
-      setTimeout(() => {
-        if (pendingCommands.current.has(id)) {
-          pendingCommands.current.delete(id);
-          reject(new Error("WebSocket response timeout"));
+                console.log("Received CTRL message with ID:", id, parsedMessage);
+
+                if (pendingCommands.current.has(id)) {
+                    pendingCommands.current.get(id).resolve({
+                        ID: id,
+                        Data: parsedMessage.RPCFrame.Reply,
+                        Type: "CTRL"
+                    });
+                    pendingCommands.current.delete(id);
+                }
+                return;
+
+            } else if (isEqual(messagePrefix, new Uint8Array([0x44, 0x41, 0x54, 0x41]))) { // 'DATA'
+                const idBytes = messageBytes.slice(4, 8);
+                const id = new DataView(idBytes.buffer).getUint32(0, false);
+
+                if (pendingCommands.current.has(id)) {
+                    const resolve = pendingCommands.current.get(id).resolve;
+                    const data = messageBytes.slice(8);
+                    resolve({
+                        ID: id,
+                        Data: data,
+                        Type: "DATA"
+                    });
+                    pendingCommands.current.delete(id);
+                } else {
+                    console.warn("Unmatched DATA message with ID:", id);
+                }
+            }
         }
-      }, 5000);
-    });
-  }, []);
 
-  const SendCommandWithoutReply = useCallback((command) => {
-    if (wsRef.current?.readyState !== WebSocket.OPEN) {
-      throw new Error("WebSocket not connected");
-    }
-    const message = { command, id: -1 }; // -1表示不需要回复
+        ws.onmessage = (event) => {
+            try {
+                let messageBytes;
 
-    // 包装成二进制帧
-    const prefix = new TextEncoder().encode("CTRL");
-    const payload = new TextEncoder().encode(JSON.stringify(message));
+                if (typeof event.data === "string") {
+                    messageBytes = new TextEncoder().encode(event.data);
+                } else if (event.data instanceof ArrayBuffer) {
+                    messageBytes = new Uint8Array(event.data);
+                } else {
+                    console.warn("Unknown WebSocket message type:", typeof event.data, event.data);
+                    return;
+                }
 
-    const fullMessage = new Uint8Array(prefix.length + payload.length);
-    fullMessage.set(prefix, 0);
-    fullMessage.set(payload, prefix.length);
+                processMessage(messageBytes);
 
-    wsRef.current.send(fullMessage.buffer);
-  }, []);
+            } catch (e) {
+                console.error("Failed to parse WebSocket message", e);
+            }
+        };
+    }, [url]);
 
-  const contextValue: WebSocketInterface = {
-    Status: status,
-    Actions: {
-      SendCommandWithReply: SendCommandWithReply,
-      SendCommandWithoutReply: SendCommandWithoutReply
-    }
-  };
+    useEffect(() => {
+        isManuallyClosed.current = false;
+        connect();
 
-  return (
-    <WebSocketContext.Provider value={contextValue}>
-      {children}
-    </WebSocketContext.Provider>
-  );
+        return () => {
+            isManuallyClosed.current = true;
+            if (reconnectTimer.current) {
+                clearTimeout(reconnectTimer.current);
+            }
+            wsRef.current?.close();
+            pendingCommands.current.clear();
+        };
+    }, [connect]);
+
+    const ensureConnected = useCallback(async () => {
+        if (wsRef.current?.readyState === WebSocket.OPEN) return;
+
+        console.log("WebSocket not connected, attempting reconnect...");
+        connect();
+
+        for (let i = 0; i < 50; i++) { // 最多等待 5 秒
+            await new Promise(resolve => setTimeout(resolve, 100));
+            if (wsRef.current?.readyState === WebSocket.OPEN) {
+                console.log("WebSocket reconnected successfully.");
+                return;
+            }
+        }
+
+        throw new Error("WebSocket reconnect failed, cannot send command.");
+    }, [connect]);
+
+    const SendCommandWithReply = useCallback(async (command) => {
+        await ensureConnected();
+
+        function getNextId() {
+            idRef.current = (Math.random() * 4294967290) % 0xFFFFFFF;
+            return Math.floor(idRef.current);
+        }
+
+        const id = getNextId();
+        const message = { command, id };
+
+        return new Promise((resolve, reject) => {
+            pendingCommands.current.set(id, { resolve, reject });
+
+            const prefix = new TextEncoder().encode("CTRL");
+            const payload = new TextEncoder().encode(JSON.stringify(message));
+
+            const fullMessage = new Uint8Array(prefix.length + payload.length);
+            fullMessage.set(prefix, 0);
+            fullMessage.set(payload, prefix.length);
+
+            wsRef.current?.send(fullMessage.buffer);
+
+            setTimeout(() => {
+                if (pendingCommands.current.has(id)) {
+                    pendingCommands.current.delete(id);
+                    reject(new Error("WebSocket response timeout"));
+                }
+            }, 5000);
+        });
+    }, [ensureConnected]);
+
+    const SendCommandWithoutReply = useCallback(async (command) => {
+        await ensureConnected();
+
+        const message = { command, id: -1 };
+
+        const prefix = new TextEncoder().encode("CTRL");
+        const payload = new TextEncoder().encode(JSON.stringify(message));
+
+        const fullMessage = new Uint8Array(prefix.length + payload.length);
+        fullMessage.set(prefix, 0);
+        fullMessage.set(payload, prefix.length);
+
+        wsRef.current?.send(fullMessage.buffer);
+    }, [ensureConnected]);
+
+    const contextValue: WebSocketInterface = {
+        Status: status,
+        Actions: {
+            SendCommandWithReply,
+            SendCommandWithoutReply
+        }
+    };
+
+    return (
+        <WebSocketContext.Provider value={contextValue}>
+            {children}
+        </WebSocketContext.Provider>
+    );
 }

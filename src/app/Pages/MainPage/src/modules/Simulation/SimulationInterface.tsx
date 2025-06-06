@@ -9,6 +9,8 @@ export interface SimulationProps{
     SimulationMode:string;
     SimulationTime:number;
     SimulationTimeStep:number;
+    SimulationPerFrameTime:number;
+    SimulationSampleRate:number;
 }
 
 // 仿真验证结果
@@ -29,6 +31,10 @@ export interface SimulationGUIProps{
     Width:number; // 窗口宽度
     Height:number; // 窗口高度
     Title:string; // 窗口标题
+}
+
+export interface SimulationStatusGUIProps{
+    IsOpen: boolean; // 窗口是否打开
 }
 
 // 仿真接口

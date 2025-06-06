@@ -1,4 +1,5 @@
 import { UpdateStatusInterface } from "../FloatWindow/FloatWindowPropInterface"
+import { PreloadData } from "./ModulesEditorProvider"
 
 interface ModulesDynamicProps{
     [key : string] : any
@@ -15,6 +16,7 @@ interface ModulesEditorGUIProps{
 }
 
 export interface ModulesDataProps{
+    Id:number,
     Type:string,
     Name:string,
     Description:string,
@@ -38,7 +40,7 @@ export interface ModulesData{
 }
 
 export interface ModulesEditorActions{
-    openEditorGUI:(preLoadData:any) => void,
+    openEditorGUI:(preLoadData:PreloadData) => void,
     updateGUIStatus:(windowStatus : UpdateStatusInterface) => void,
     removeGUI:(id:number) => void,
 }

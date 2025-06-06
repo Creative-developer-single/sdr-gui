@@ -61,8 +61,7 @@ export function LogicGraphProvider( {children} ){
             Y: Math.random() * 5000  // 假设画布高度为600
         };
 
-        console.log("添加节点", node);
-        console.log("当前节点列表", Nodes);
+        
         setNodes(prevNodes => [...prevNodes,node]);
     }
 
@@ -82,7 +81,10 @@ export function LogicGraphProvider( {children} ){
     function updateNode(nodeID: number, updates: Partial<LogicGraphNodesProp>){
         const newNodes = Nodes.map(node =>
             node.ID === nodeID ? { ...node, ...updates } : node);
-        setNodes(newNodes);
+        
+        setNodes(prevNodes => prevNodes.map(node =>
+            node.ID === nodeID ? { ...node, ...updates } : node
+        ));
     }
 
     // 定义边的操作函数
@@ -95,7 +97,7 @@ export function LogicGraphProvider( {children} ){
                     StartNode: {
                         isNodeSet: true,
                         NodeID: EdgeProp.NodeID, // 假设PortIndex是节点ID
-                        EdgeIndex: 0 // 假设EdgeIndex为0
+                        EdgeIndex: EdgeProp.EdgeIndex // 假设EdgeIndex为0
                     },
                     Mode: "StartPoint"
                 }));
@@ -106,7 +108,7 @@ export function LogicGraphProvider( {children} ){
                     EndNode: {
                         isNodeSet: true,
                         NodeID: EdgeProp.NodeID, // 假设PortIndex是节点ID
-                        EdgeIndex: 0 // 假设EdgeIndex为0
+                        EdgeIndex: EdgeProp.EdgeIndex // 假设EdgeIndex为0
                     },
                     Mode: "TerminalPoint"
                 }));
@@ -171,6 +173,52 @@ export function LogicGraphProvider( {children} ){
         );
     }
 
+    // 更新全局参数
+    function updateGlobalProps(key:string,value:any){
+        const newNodes = Nodes.map(node => {
+            return {
+                ...node,
+                NodesData: {
+                    ...node.NodesData,
+                    Properties: {
+                        ...node.NodesData.Properties,
+                        Global: {
+                            ...node.NodesData.Properties.Global,
+                            SampleRate: value
+                        }
+                    }
+                }
+            };
+        });
+        console.log("更新全局参数", key, value);
+        console.log("更新后的节点列表", newNodes);
+        setNodes(newNodes);
+    }
+
+    // 更新固定参数
+    function updateFixedProps(key:string,value:any){
+        const newNodes = Nodes.map(node => {
+            return {
+                ...node,
+                NodesData: {
+                    ...node.NodesData,
+                    Properties: {
+                        ...node.NodesData.Properties,
+                        Fixed: {
+                            ...node.NodesData.Properties.Fixed,
+                            [key]: value
+                        }
+                    }
+                }
+            };
+        });
+        setNodes(newNodes);
+    }
+
+    function updateNodes(nodes: LogicGraphProviderInterface["Nodes"]){
+        setNodes(nodes);
+    }
+
     function getLogicGraphData(){
         return {
             Nodes: Nodes,
@@ -194,7 +242,10 @@ export function LogicGraphProvider( {children} ){
             addEdge: addEdge,
             removeEdge: removeEdge,
             updateEdge: updateEdge,
-            getLogicGraphData: getLogicGraphData
+            getLogicGraphData: getLogicGraphData,
+            updateGlobalProps: updateGlobalProps,
+            updateFixedProps: updateFixedProps,
+            updateNodes: updateNodes
         }
     }
 

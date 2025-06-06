@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import ConstellationDiagram from './ConstellationDiagram';
+import ConstellationDiagram from '../Components/ConstellationDiagram';
 
 interface IQDataPoint {
     i: number;

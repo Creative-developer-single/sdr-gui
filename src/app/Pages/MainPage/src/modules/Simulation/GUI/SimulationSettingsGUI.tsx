@@ -1,5 +1,8 @@
 import FloatWindow from "../../FloatWindow/FloatWindow";
 import { FloatWindowProp, FloatWindowPropInterface } from "../../FloatWindow/FloatWindowPropInterface";
+import { useWebController } from "../../WebBridge/WebController/WebController";
+import { useWebSocket } from "../../WebBridge/WebSocket/WebSocketProvider";
+import { useLogicGraph } from "../../WorkSpace/LogicGraphProvider/LogicGraphProvider";
 import { SimulationBasicSettingsListAlias } from "../SettingsDict/SimulationBasicSettingsList";
 import { SimulationGUIProps, SimulationProps } from "../SimulationInterface";
 import { useSimulation } from "../SimulationProvider";
@@ -7,6 +10,9 @@ import { useSimulation } from "../SimulationProvider";
 export function SimulationSettingsGUI(){
     // 获取仿真Context
     const simulationContext = useSimulation();
+
+    // 获取节点Context
+    const LogicGraphContext = useLogicGraph();
 
     return (
         simulationContext.SimulationGUIProps.map((item)=>{
@@ -23,6 +29,15 @@ export function SimulationSettingsGUIMain( { window } : {
 } ){
     // 获取仿真Context
     const simulationContext = useSimulation();
+
+    // 获取WebControllerContext
+    const webController = useWebController();
+
+    // 获取WebSocketContext
+    const WebSocketContext = useWebSocket();
+
+    // 获取LogicGraphContext
+    const LogicGraphContext = useLogicGraph();
 
     if (!window) {
         console.warn("SimulationSettingsGUIMain: window is null or undefined");
@@ -111,7 +126,30 @@ export function SimulationSettingsGUIMain( { window } : {
                                         <button className="bg-blue-500 border-gray-400 rounded-md shadow-md font-semibold text-white
                                                     hover:bg-blue-600 active:bg-blue-800 mx-2 px-4 py-1" onClick={()=>{
                                                         // 同步更新
+                                                        webController.Actions.RPCSetSimulationParameter(simulationContext.SimulationProps, WebSocketContext);
                                                         simulationContext.Actions.DestroySimulationSettingsGUI(window.Id);
+
+                                                        // 更新全局和固定参数
+                                                        const newNodes = LogicGraphContext.Nodes.map(node => {
+                                                            return {
+                                                                ...node,
+                                                                NodesData: {
+                                                                    ...node.NodesData,
+                                                                    Properties: {
+                                                                        ...node.NodesData.Properties,
+                                                                        Global: {
+                                                                            ...node.NodesData.Properties.Global,
+                                                                            SampleRate: simulationContext.SimulationProps.SimulationSampleRate
+                                                                        },
+                                                                        Fixed: {
+                                                                            ...node.NodesData.Properties.Fixed,
+                                                                            BlockLength: Math.floor(simulationContext.SimulationProps.SimulationSampleRate * simulationContext.SimulationProps.SimulationPerFrameTime)
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        });
+                                                        LogicGraphContext.Actions.updateNodes(newNodes);
                                                     }}>应用设置</button>
                                         </div>
                                     </div>

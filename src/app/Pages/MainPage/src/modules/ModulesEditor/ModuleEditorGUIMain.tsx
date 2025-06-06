@@ -6,6 +6,7 @@ import { ModulesDataProps } from "./ModulesEditorProviderInterface";
 import { useLogicGraph } from "../WorkSpace/LogicGraphProvider/LogicGraphProvider";
 import { LogicGraphNodesProp } from "../WorkSpace/LogicGraphProvider/LogicGraphProviderInterface";
 import { LogicGraphShownNode } from "../WorkSpace/LogicGraphEditor/LogicGraphNode/LogicGraphNode";
+import { smartParse } from "../Tools/SmartParse";
 
 function ModuleEditorGUIMain( { windowId } ){
     // 获取模块编辑器的上下文
@@ -179,17 +180,17 @@ function ModuleEditorGUIMain( { windowId } ){
                                     <form key={key} className="flex flex-col w-1/2 p-2 rounded-md bg-white border-gray-300">
                                         <label className="font-medium text-sm text-black">{ModulesListAlias[key]}</label>
                                         <input id={key} className="px-1 py-1 text-xs text-gray-600 border-gray-300 rounded-md shadow-md" type="text" value={String(value)} onChange={(e)=>{
-                                            const newValue = e.target.value;
-                                            setCurrentModuleData((prevModule) => ({
-                                                ...prevModule,
-                                                Properties: {
-                                                    ...prevModule.Properties,
-                                                    Fixed: {
-                                                        ...prevModule.Properties.Fixed,
-                                                        [key]: newValue,
-                                                    },
-                                                },
-                                            }));
+                                            // const newValue = e.target.value;
+                                            // setCurrentModuleData((prevModule) => ({
+                                            //     ...prevModule,
+                                            //     Properties: {
+                                            //         ...prevModule.Properties,
+                                            //         Fixed: {
+                                            //             ...prevModule.Properties.Fixed,
+                                            //             [key]: newValue,
+                                            //         },
+                                            //     },
+                                            // }));
                                         }}></input>
                                     </form>
                                 ))
@@ -204,17 +205,17 @@ function ModuleEditorGUIMain( { windowId } ){
                                     <form key={key} className="flex flex-col w-1/2 p-2 rounded-md bg-white border-gray-300">
                                         <label className="font-medium text-sm text-black">{ModulesListAlias[key]}</label>
                                         <input id={key} className="px-1 py-1 text-xs text-gray-600 border-gray-300 rounded-md shadow-md" type="text" value={String(value)} onChange={(e)=>{
-                                            const newValue = e.target.value;
-                                            setCurrentModuleData((prevModule) => ({
-                                                ...prevModule,
-                                                Properties: {
-                                                    ...prevModule.Properties,
-                                                    Global: {
-                                                        ...prevModule.Properties.Global,
-                                                        [key]: newValue,
-                                                    },
-                                                },
-                                            }));
+                                            // const newValue = e.target.value;
+                                            // setCurrentModuleData((prevModule) => ({
+                                            //     ...prevModule,
+                                            //     Properties: {
+                                            //         ...prevModule.Properties,
+                                            //         Global: {
+                                            //             ...prevModule.Properties.Global,
+                                            //             [key]: newValue,
+                                            //         },
+                                            //     },
+                                            // }));
                                         }}></input>
                                     </form>
                                 ))
@@ -228,7 +229,7 @@ function ModuleEditorGUIMain( { windowId } ){
                                     <form key={key} className="flex flex-col w-1/2 p-2 rounded-md bg-white border-gray-300">
                                         <label className="font-medium text-sm text-black">{ModulesListAlias[key]}</label>
                                         <input id={key} className="px-1 py-1 text-xs text-gray-600 border-gray-300 rounded-md shadow-md" type="text" value={String(value)} onChange={(e)=>{
-                                            const newValue = e.target.value;
+                                            const newValue = smartParse(e.target.value);
                                             setCurrentModuleData((prevModule) => ({
                                                 ...prevModule,
                                                 Properties: {
@@ -271,6 +272,7 @@ function ModuleEditorGUIMain( { windowId } ){
                                     },
                                 },
                                 NodesData:{
+                                    Id:currentModule.Id,
                                     Type:currentModule.Type,
                                     Name:currentModule.Name,
                                     Description:currentModule.Description,

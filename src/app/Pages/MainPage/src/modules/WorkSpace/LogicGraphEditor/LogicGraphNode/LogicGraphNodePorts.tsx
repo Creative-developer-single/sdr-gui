@@ -6,10 +6,12 @@ function LogicGraphNodePort({ NodeID, PortIndex, PortType }) {
     const { VitrualEdges, Edges, Actions } = useLogicGraph();
     const [backgroundColor, setBackgroundColor] = useState("white");
   
+  
     function onMouseDown(e: React.MouseEvent<HTMLDivElement>) {
         e.stopPropagation();
         e.preventDefault();
 
+        //console.log("onMouseDown:", NodeID, PortIndex, PortType);
         // 如果是左键点击，那么视为添加节点
         if (e.button === 0){
             const EdgeProp = {
@@ -49,10 +51,12 @@ function LogicGraphNodePort({ NodeID, PortIndex, PortType }) {
     }, [VitrualEdges, NodeID, PortIndex, PortType]);
   
     return (
-      <div onContextMenu={(e) => {e.preventDefault();}} onMouseDown={onMouseDown} className="flex flex-col flex-1 items-center justify-center">
+      <div onContextMenu={(e) => {e.preventDefault();}}  className="flex flex-col flex-1 items-center justify-center">
         <div
+          id={`port-${NodeID}-${PortIndex}`}
           className="w-[12px] h-[12px] bg-white border-[2px] border-[#1967d2] shadow-[#1967D233] shadow-lg"
           style={{ backgroundColor }}
+          onMouseDown={onMouseDown}
         ></div>
       </div>
     );
@@ -63,6 +67,7 @@ export function LogicGraphNodeInputPorts( { nodeData } : { nodeData?:LogicGraphN
         return null; // 如果没有找到节点数据，返回 null
     }
 
+    //console.log("LogicGraphNodeInputPorts", nodeData.GuiProps.Ports.InputPort);
     return (
         <div className="flex flex-col h-full justify-center items-center">
             {nodeData.GuiProps.Ports.InputPort.map((item) => (

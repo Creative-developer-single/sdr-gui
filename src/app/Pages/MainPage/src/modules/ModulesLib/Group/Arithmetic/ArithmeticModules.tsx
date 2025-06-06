@@ -1,8 +1,9 @@
 export const ArithmeticModules = {
     "Modules": [
       {
+        "Id":0,
         "Type":"Arithmetic",
-        "Name": "basicALU",
+        "Name": "BasicALU",
         "Description": "基础运算器",
         "Properties": {
           "Fixed": {
@@ -11,7 +12,7 @@ export const ArithmeticModules = {
             "InputCount": 2,
             "OutputCount": 1,
             "ComponentID": "default0",
-            "ComponentType": "Arthmetic.basicALU"
+            "ComponentType": "Arithmetic.BasicALU"
           },
           "Global": {
             "SampleRate": 48000
@@ -22,6 +23,7 @@ export const ArithmeticModules = {
         }
       },
       {
+        "Id":0,
         "Type":"Arithmetic",
         "Name": "Calculus",
         "Description": "微积分器",
@@ -32,7 +34,7 @@ export const ArithmeticModules = {
             "InputCount": 1,
             "OutputCount": 1,
             "ComponentID": "default0",
-            "ComponentType": "Arthmetic.Calculus"
+            "ComponentType": "Arithmetic.Calculus"
           },
           "Global": {
             "SampleRate": 48000
@@ -43,6 +45,7 @@ export const ArithmeticModules = {
         }
       },
       {
+        "Id":0,
         "Type":"Arithmetic",
         "Name": "NonLinear",
         "Description": "非线性运算器",
@@ -53,7 +56,7 @@ export const ArithmeticModules = {
             "InputCount": 2,
             "OutputCount": 1,
             "ComponentID": "default0",
-            "ComponentType": "Arthmetic.NonLinear"
+            "ComponentType": "Arithmetic.NonLinear"
           },
           "Global": {
             "SampleRate": 48000

@@ -2,6 +2,7 @@ export const ReceiveSourceModules = {
     "GroupName": "receiveSource",
     "Modules": [
       {
+        "Id":0,
         "Type": "ReceiveSource",
         "Name": "randomReceiver",
         "Description": "随机信号接收器",

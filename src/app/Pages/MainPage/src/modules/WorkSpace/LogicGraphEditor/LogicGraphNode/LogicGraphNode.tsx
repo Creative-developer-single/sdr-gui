@@ -1,11 +1,14 @@
 import { UpdateStatusInterface } from "../../../FloatWindow/FloatWindowPropInterface";
-import { LogicGraphNodesProp } from "../../LogicGraphProvider/LogicGraphProviderInterface";
+import { LogicGraphNodesProp, LogicGraphProviderInterface } from "../../LogicGraphProvider/LogicGraphProviderInterface";
 import { useLogicGraph } from "../../LogicGraphProvider/LogicGraphProvider";
 import { FloatWindowWithoutTitle } from "../../../FloatWindow/FloatWindowWithoutTitle";
 import { ModulesList, ModulesListAlias } from "../../../ModulesLib/ModulesList";
 import { LogicGraphNodeInputPorts, LogicGraphNodeOutputPorts } from "./LogicGraphNodePorts";
-import { ModulesDataProps } from "../../../ModulesEditor/ModulesEditorProviderInterface";
+import { ModulesDataProps, ModulesEditorActions } from "../../../ModulesEditor/ModulesEditorProviderInterface";
 import { useModulesEditor } from "../../../ModulesEditor/ModulesEditorProvider";
+import { useSimulation } from "../../../Simulation/SimulationProvider";
+import { useViewModule } from "../../../ViewModules/Provider/ViewModuleProvider";
+import { useDataSync } from "../../../DataSync/Provider/DataSyncProvider";
 
 // 该节点仅用于展示，无任何交互逻辑
 export function LogicGraphShownNode( { groupName,ModuleName,refModuleData } : {
@@ -17,8 +20,7 @@ export function LogicGraphShownNode( { groupName,ModuleName,refModuleData } : {
     // 从ModulesList中查找组
     const modules = ModulesList.find(group => group.GroupName === groupName);
     const moduleGet = modules?.Modules.find(mod => mod.Name === ModuleName);
-
-    console.log("模块组:", groupName, "模块名称:", ModuleName, "模块数据:", moduleGet);
+    //console.log("模块组:", groupName, "模块名称:", ModuleName, "模块数据:", moduleGet);
 
     if (!moduleGet){
         return null;
@@ -70,10 +72,13 @@ export function LogicGraphShownNode( { groupName,ModuleName,refModuleData } : {
 export function LogicGraphNode( { nodeID } ){
     const { Nodes,Actions } = useLogicGraph();
     const { modulesData,actions} = useModulesEditor();
+    const { SimulationState } = useSimulation();
+    const viewModulesContext = useViewModule();
+    const DataSyncContext = useDataSync();
 
     // 查找节点数据
     const nodeData = Nodes.find(node => node.ID === nodeID);
-    
+    //console.log("当前节点:",nodeData);
     
     const windowData = {
         id: nodeData?.ID || 0,
@@ -120,20 +125,34 @@ export function LogicGraphNode( { nodeID } ){
         }
     }
 
+    function OpenEidtorGUI( actions:ModulesEditorActions)
+    {
+        console.log("打开模块编辑器，节点数据：", nodeData?.NodesData);
+        actions.openEditorGUI({
+            windowId:0,
+            windowMode:'ModulesEditor',
+            type:nodeData?.NodesData.Type || 'Default',
+            width:800,
+            height:500,
+            ModulesData:nodeData?.NodesData,
+            bindNodeID: nodeData?.ID || 0
+        });
+    }
+
     return (
         <div>
             <FloatWindowWithoutTitle WindowInitialData={windowData} onUpdateStatus={onUpdateStatus} isRelative={true}>
                 <div
-                    onContextMenu={(e) => {e.stopPropagation(); e.preventDefault();}} onMouseDown={DeleteNodeByMouseDown} onDoubleClick={(e) =>{
-
-                        actions.openEditorGUI({
-                            windowId:0,
-                            windowMode:'ModulesEditor',
-                            type:nodeData?.NodesData.Type || 'Default',
-                            width:800,
-                            height:500,
-                            ModulesData:nodeData?.NodesData
-                        });
+                    onContextMenu={(e) => {e.stopPropagation(); e.preventDefault();}} onMouseDown={DeleteNodeByMouseDown} onDoubleClick={async (e) =>{
+                        if(SimulationState.State == "running"){
+                            viewModulesContext.Actions.OpenViewModuleGUI(nodeData?.ID);
+                            //await DataSyncContext.Actions.getNodesData();
+                        }else if(SimulationState.State == "stopped"){
+                            // 打开模块编辑器
+                            OpenEidtorGUI(actions);
+                        }
+                        
+                        
                     }}
                     className="w-full h-full flex flex-row absolute bg-white">
                     <LogicGraphNodeInputPorts nodeData={ nodeData } ></LogicGraphNodeInputPorts>

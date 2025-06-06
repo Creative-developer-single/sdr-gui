@@ -7,6 +7,7 @@ import { DefaultModules } from "./Group/Default/DefaultModules"
 import { ReceiveSourceModules } from "./Group/ReceiveSource/ReceiveSourceModules"
 import { SendSourceModules } from "./Group/SendSource/SendSourceModules"
 import { DataBufferModules } from "./Group/Others/DataBuffer/DataBuffers"
+import { VisualModules } from "./Group/Visual/VisualModules"
 
 //分类 -> 模块名
 export const ModulesList = [
@@ -15,6 +16,7 @@ export const ModulesList = [
     { GroupName: 'ReceiveSource',Modules: ReceiveSourceModules.Modules},
     { GroupName: 'Arithmetic', Modules: ArithmeticModules.Modules},
     { GroupName: 'DataBuffer', Modules: DataBufferModules.Modules},
+    { GroupName: 'Visual',Modules:VisualModules.Modules}
 ]
 export const ModulesListAlias = {
     // 固定属性
@@ -38,4 +40,7 @@ export const ModulesListAlias = {
     blockPhase:'相位',
 
     bufferLength:'缓冲区长度',
+    DataType:'数据类型',
+
+    OperationMode:'运算模式',
 }
