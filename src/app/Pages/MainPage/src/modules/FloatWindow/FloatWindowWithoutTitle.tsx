@@ -107,6 +107,7 @@ export function FloatWindowWithoutTitle({
         top: `${WindowInitialData.posY}px`,
       }}
       onMouseDown={handleMouseDown}
+      onContextMenu={(e) => {e.stopPropagation();e.preventDefault();}} // 禁止右键菜单
     >
       {children}
     </div>

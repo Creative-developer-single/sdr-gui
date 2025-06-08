@@ -1,6 +1,7 @@
 import FloatWindow from "../../FloatWindow/FloatWindow";
 import { UpdateStatusInterface } from "../../FloatWindow/FloatWindowPropInterface";
 import { useSimulation } from "../../Simulation/SimulationProvider";
+import { useLogicGraph } from "../../WorkSpace/LogicGraphProvider/LogicGraphProvider";
 import ConstellationDiagram from "../Components/ConstellationDiagram";
 import FrequencySpectrumDiagram from "../Components/FrequencySpectrumDiagram";
 import TimeDomainDiagram from "../Components/TimeDomainDiagram";
@@ -15,6 +16,17 @@ export function ViewModulesGUIMain( { ViewModulesItem } : {
 
     // 获取仿真器Context
     const simulatorContext = useSimulation();
+
+    // 获取逻辑图Context
+    const logicGraphContext = useLogicGraph();
+
+    // 获取目标节点采样率
+    const targetNode = logicGraphContext.Nodes.find(item => item.ID === ViewModulesItem.ViewModuleGUIProps.BindNodeId);
+    if (!targetNode) {
+        console.error("未找到目标节点，无法获取采样率");
+        return null;
+    }
+    const targetSampleRate = targetNode.NodesData.Properties.Global?.SampleRate || simulatorContext.SimulationProps.SimulationSampleRate;
 
     function onUpdateStatus(data:UpdateStatusInterface){
         const status:ViewModuleGUIProps ={
@@ -57,14 +69,14 @@ export function ViewModulesGUIMain( { ViewModulesItem } : {
             viewModuleComponent = (
                 <TimeDomainDiagram
                     data = {ViewModulesItem.ViewModuleData.Data[ViewModulesItem.ViewModuleData.ActiveChannelNum]}
-                    sampleRate = {simulatorContext.SimulationProps.SimulationSampleRate}
+                    sampleRate = {targetSampleRate}
                 />
             );
             break;
         case "SpectrumAnalyzer":
             viewModuleComponent = (
                 <FrequencySpectrumDiagram freqData={ViewModulesItem.ViewModuleData.Data[ViewModulesItem.ViewModuleData.ActiveChannelNum]}
-                sampleRate={simulatorContext.SimulationProps.SimulationSampleRate}
+                sampleRate={targetSampleRate}
                 ></FrequencySpectrumDiagram>
             )
             break;
@@ -82,7 +94,9 @@ export function ViewModulesGUIMain( { ViewModulesItem } : {
 
     return (
         <FloatWindow data={floatWindowProps}>
+            <div className="">
             {viewModuleComponent}
+            </div>
         </FloatWindow>
     )
 }

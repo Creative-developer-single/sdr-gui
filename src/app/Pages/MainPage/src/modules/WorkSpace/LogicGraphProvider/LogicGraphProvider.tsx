@@ -58,8 +58,8 @@ export function LogicGraphProvider( {children} ){
 
         // 分配随机位置
         node.GuiProps.Pos = {
-            X: Math.random() * 5000, // 假设画布宽度为800
-            Y: Math.random() * 5000  // 假设画布高度为600
+            X: Math.random() * 1000, // 假设画布宽度为800
+            Y: Math.random() * 800  // 假设画布高度为600
         };
 
         

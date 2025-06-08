@@ -59,6 +59,7 @@ export function DataSyncProvider( {children} ){
 
     // 时刻与后端同步仿真状态变化
     useEffect(()=>{
+        webControllerContext.Actions.RPCSetSimulationParameter(simulationContext.SimulationProps,webSocketContext);
         webControllerContext.Actions.RPCModifySimulationStatus(simulationContext.SimulationState.State,webSocketContext);
     },[simulationContext.SimulationState.State]);
 

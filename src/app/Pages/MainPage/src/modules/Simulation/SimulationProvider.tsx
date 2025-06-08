@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useState } from "react";
 import { SimulationActions, SimulationData, SimulationGUIProps, SimulationProps, SimulationProviderInterface, SimulationState, SimulationVerifyResult } from "./SimulationInterface";
+import { SimulationSettingsTemplate } from "./SettingsDict/SimulationBasicSettingsList";
 
 const SimulationContext = createContext<SimulationProviderInterface | null>(null);
 
@@ -29,7 +30,7 @@ export function SimulationProvider( {children} ){
 
     // 定义仿真系统所用参数
     const [simulationState, setSimulationState] = useState<SimulationState>(defaultSimulationState);
-    const [simulationProps, setSimulationProps] = useState<SimulationProps>(defaultSimulationProps);
+    const [simulationProps, setSimulationProps] = useState<SimulationProps>(SimulationSettingsTemplate);
     const [simulationVerifyResult, setSimulationVerifyResult] = useState<SimulationVerifyResult>();
     const [simulationGUIProps, setSimulationGUIProps] = useState<SimulationProviderInterface['SimulationGUIProps']>([]);
 

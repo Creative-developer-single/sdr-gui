@@ -167,6 +167,10 @@ export function LogicGraphEditorGUIMain({ children }) {
       ref={containerRef}
       className="relative flex-grow p-4 bg-white overflow-hidden h-full"
       onMouseDown={handleMouseDown}
+      onContextMenu={(e) => {
+        e.preventDefault(); // 禁止右键菜单
+       
+      }}
     >
       <div
         className="canvas-grid absolute z-0 w-[5000px] h-[5000px] bg-gray-100"

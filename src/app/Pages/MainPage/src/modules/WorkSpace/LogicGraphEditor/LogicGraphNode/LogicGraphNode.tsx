@@ -132,7 +132,7 @@ export function LogicGraphNode( { nodeID } ){
             windowId:0,
             windowMode:'ModulesEditor',
             type:nodeData?.NodesData.Type || 'Default',
-            width:800,
+            width:600,
             height:500,
             ModulesData:nodeData?.NodesData,
             bindNodeID: nodeData?.ID || 0

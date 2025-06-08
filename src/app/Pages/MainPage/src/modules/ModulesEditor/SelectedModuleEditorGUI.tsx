@@ -57,7 +57,7 @@ function SelectedModuleEditorGUIMain({ windowId, currentNode }: { windowId: numb
     return (
         <div className="flex flex-row bg-slate-100 w-full h-full pb-10">
             {/* 右侧：模块预览 + 参数配置 */}
-            <div className="basis-3/5 h-full flex flex-col bg-slate-100">
+            <div className=" h-full flex flex-col bg-slate-100">
                 {/* 模块预览 */}
                 <div className="h-3/5 w-full flex-initial p-2">
                     <div className="h-full w-full flex flex-col bg-slate-50 rounded-md shadow-lg">

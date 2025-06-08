@@ -1,8 +1,12 @@
+import { SimulationProps } from "../SimulationInterface"
 
-const SimulationBasicSettingsList = {
+export const SimulationSettingsTemplate:SimulationProps = {
     SimulationMode:"Static",
     SimulationTime:5,
-    SimulationTimeStep:0.0001
+    SimulationTimeStep:0.1,
+    SimulationSampleRate:5000,
+    SimulationPerFrameTime:0.1
+
 }
 
 export const SimulationBasicSettingsListAlias = {

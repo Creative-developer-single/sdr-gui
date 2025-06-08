@@ -12,13 +12,14 @@ import { RFModules } from "./Group/RF/RFModules"
 import { ConverterModules } from "./Group/Converter/ConverterModules"
 import { ShapeFilterModules } from "./Group/ShapeFilter/ShapeFilterModules"
 import { AFCModules } from "./Group/AFC/AFCModules"
+import { OthersModules } from "./Group/Others/OthersModules"
 
 //分类 -> 模块名
 export const ModulesList = [
     { GroupName: 'SendSource',Modules: SendSourceModules.Modules},
     { GroupName: 'ReceiveSource',Modules: ReceiveSourceModules.Modules},
     { GroupName: 'Arithmetic', Modules: ArithmeticModules.Modules},
-    { GroupName: 'Others', Modules: DataBufferModules.Modules},
+    { GroupName: 'Others', Modules: OthersModules.Modules},
     { GroupName: 'Visual',Modules:VisualModules.Modules},
     { GroupName: 'FIR',Modules:FIRModules.Modules},
     { GroupName: 'RF',Modules:RFModules.Modules}, // 射频模块目前没有
@@ -171,6 +172,11 @@ export const ModulesListAlias = {
         SinglePortBuffer:{
             Name:'单端口数据缓冲区',
             bufferLength:'缓冲区长度'
+        },
+        Resample:{
+            Name:'重采样模块',
+            SourceSampleRate:'源采样率',
+            TargetSampleRate:'目标采样率'
         }
     },
     Visual:{
