@@ -5,6 +5,8 @@ import { ViewModuleProviderInterface } from "../../ViewModules/Provider/ViewModu
 import { WebControllerInterface } from "../../WebBridge/WebController/WebControllerInterface";
 import { WebSocketInterface } from "../../WebBridge/WebSocket/WebSocketInterface";
 import { LogicGraphProviderInterface } from "../../WorkSpace/LogicGraphProvider/LogicGraphProviderInterface";
+import { ProjectManagerInterface } from "../../WorkSpace/ProjectManager/Provider/ProjectManagerInterface";
+import { ToolBarFileManager } from "./File/ToolBarFileController";
 import { ToolBarModifySimulationStatus, ToolBarOpenSimulationSettingsGUI } from "./Simulation/ToolBarSimulationController";
 
 export interface CollectiveContext {
@@ -12,23 +14,11 @@ export interface CollectiveContext {
     LogicGraph: LogicGraphProviderInterface,
     Simulation: SimulationProviderInterface,
     WebController: WebControllerInterface,
-    DataSyncContext:DataSyncProviderInterface,
     WebSocketContext:WebSocketInterface,
-    ViewModulesContext:ViewModuleProviderInterface
+    ProjectManager: ProjectManagerInterface
 }
 
-function ToolBarFileManager( item,context:CollectiveContext )
-{
-    switch(item.id){
-        case "NewProject":
-            context.LogicGraph.Actions.openLogicGraph();
-            break;
-        default:
-            console.warn(`未处理的文件管理器项: ${item.id}`);
-            break;
-    }
-    // 这里可以添加文件管理器的逻辑
-}
+
 
 function ToolBarOpenModulesEditor( preloadType,actions:ModulesEditorActions ){
     const preLoadData = {
@@ -44,27 +34,31 @@ function ToolBarOpenModulesEditor( preloadType,actions:ModulesEditorActions ){
     console.log(`打开模块浏览器，类型: ${preloadType}`);
 }
 
+async function ToolBarVerfiyLogicGraph( context:CollectiveContext ){
+    await context.WebController.Actions.RPCModifyLogicGraph(context.LogicGraph.Actions.getLogicGraphData());
+}
+
 function ToolBarSimulationManager( item,context:CollectiveContext ){
     switch(item.id){
         case "VerifyGraph":
-            context.WebController.Actions.RPCModifyLogicGrapWithoutReply(context.LogicGraph.Actions.getLogicGraphData());
-            context.ViewModulesContext.Actions.GenerateViewModules();
+            ToolBarVerfiyLogicGraph(context);
             break;
         case "SimulationSetting":
             ToolBarOpenSimulationSettingsGUI(context);
             break;
         case "runSimulation":
+            ToolBarVerfiyLogicGraph(context);
             ToolBarModifySimulationStatus(context);
             break;
         case "generateReport":
-            context.DataSyncContext.Actions.getNodesData();
+            break;
         default:
             console.warn(`未处理的模拟管理器项: ${item.id}`);
             break;
     }
 }
 
-export function ToolBarController( itemID,item,SharedContext:CollectiveContext){
+export async function ToolBarController( itemID,item,SharedContext:CollectiveContext){
     switch (itemID){
         case "file":
             ToolBarFileManager(item,SharedContext);

@@ -14,7 +14,7 @@ interface RPCFrameItemInterface{
 }
 
 interface RPCActionsInterface{
-    RPCModifyLogicGraph( logicGraph: LogicGraphDataInterface ): void;
+    RPCModifyLogicGraph( logicGraph: LogicGraphDataInterface ): Promise<any>;
     RPCModifyLogicGrapWithoutReply( logicGraph: LogicGraphDataInterface ): void;
     RPCModifySimulationStatus( status: string,webSocketContext:WebSocketInterface ): Promise<any>;
     RPCSetSimulationParameter( props: DynamicProps, webSocketContext: WebSocketInterface ): Promise<any>;

@@ -1,6 +1,7 @@
 import FloatWindow from "../../FloatWindow/FloatWindow";
 import { UpdateStatusInterface } from "../../FloatWindow/FloatWindowPropInterface";
 import { useSimulation } from "../../Simulation/SimulationProvider";
+import ConstellationDiagram from "../Components/ConstellationDiagram";
 import FrequencySpectrumDiagram from "../Components/FrequencySpectrumDiagram";
 import TimeDomainDiagram from "../Components/TimeDomainDiagram";
 import { ViewModuleGUIProps, ViewModuleProps } from "../Provider/ViewModuleInterface";
@@ -42,14 +43,14 @@ export function ViewModulesGUIMain( { ViewModulesItem } : {
         posX: ViewModulesItem.ViewModuleGUIProps.Pos.X,
         posY: ViewModulesItem.ViewModuleGUIProps.Pos.Y,
         width: ViewModulesItem.ViewModuleGUIProps.width,
-        height: ViewModulesItem.ViewModuleGUIProps.height,
+        height: ViewModulesItem.ViewModuleGUIProps.height + 100,
         title: ViewModulesItem.ViewModuleGUIProps.title,
         icon: '📊', // 窗口图标
         onUpdateStatus: onUpdateStatus,
         onGUIDestroy: onGUIDestroy
     }
 
-    console.log("当前可视化模块数据:",ViewModulesItem);
+    //console.log("当前可视化模块数据:",ViewModulesItem);
     let viewModuleComponent;
     switch(ViewModulesItem.ViewModuleGUIProps.type) {
         case "Oscilloscope":
@@ -60,12 +61,20 @@ export function ViewModulesGUIMain( { ViewModulesItem } : {
                 />
             );
             break;
-        case "FrequencySpectrum":
+        case "SpectrumAnalyzer":
             viewModuleComponent = (
                 <FrequencySpectrumDiagram freqData={ViewModulesItem.ViewModuleData.Data[ViewModulesItem.ViewModuleData.ActiveChannelNum]}
                 sampleRate={simulatorContext.SimulationProps.SimulationSampleRate}
                 ></FrequencySpectrumDiagram>
             )
+            break;
+        case "ConstellationDiagram":
+            viewModuleComponent = (
+                <ConstellationDiagram iData={ViewModulesItem.ViewModuleData.Data[0]}
+                    qData={ViewModulesItem.ViewModuleData.Data[1]}>
+                </ConstellationDiagram>
+            )
+            break;
         default:
             viewModuleComponent = null;
             break;

@@ -52,6 +52,17 @@ export interface SimulationActions{
     OpenSimulationSettingsGUI: () => void; // 打开仿真设置GUI
     UpdateSimulationSettingsGUIStatus: (data: SimulationGUIProps) => void;
     DestroySimulationSettingsGUI: (id: number) => void; // 销毁仿真设置GUI
+
+    // 导入导出类
+    importSimulation: (data: SimulationData) => void; // 导入仿真数据
+    exportSimulation: () => SimulationData; // 导出仿真数据
+}
+
+export interface SimulationData{
+    SimulationState: SimulationState; // 仿真状态
+    SimulationProps: SimulationProps; // 仿真参数
+    SimulationVerifyResult: SimulationVerifyResult; // 仿真验证结果
+    SimulationGUIProps: SimulationGUIProps[]; // 仿真GUI属性
 }
 
 // 仿真Provider接口

@@ -1,68 +1,66 @@
-export const VisualModules = {
+export const ConverterModules = {
     "Modules": [
       {
         "Id":0,
-        "Type": "Visual",
-        "Name": "Oscilloscope",
-        "Description": "示波器",
+        "Type": "Converter",
+        "Name": "DataConverter",
+        "Description": "数据转换器",
         "Properties": {
           "Fixed": {
             "ProcessMode": "block",
             "BlockLength": 1024,
             "InputCount": 1,
             "OutputCount": 1,
-            "ComponentID": "Sin1",
-            "ComponentType": "Visual.Oscilloscope"
+            "ComponentID": "Converter",
+            "ComponentType": "Converter.DataConverter"
           },
           "Global": {
             "SampleRate": 48000,
           },
           "Local": {
-            "bufferLength": 512,
-            "DataType":"Real"
+            "ConvertType":"Real"
           }
         }
       },{
         "Id":0,
-        "Type": "Visual",
-        "Name": "SpectrumAnalyzer",
-        "Description": "示波器",
+        "Type": "Converter",
+        "Name": "DataAllocator",
+        "Description": "数据分配器",
         "Properties": {
           "Fixed": {
             "ProcessMode": "block",
             "BlockLength": 1024,
             "InputCount": 1,
-            "OutputCount": 1,
-            "ComponentID": "Sin1",
-            "ComponentType": "Visual.SpectrumAnalyzer"
+            "OutputCount": 2,
+            "ComponentID": "DataAllocator",
+            "ComponentType": "Converter.DataAllocator"
           },
           "Global": {
             "SampleRate": 48000,
           },
           "Local": {
-            "bufferLength": 512,
-            "SpectrumType":"Amp"
+            
           }
         }
       },{
         "Id":0,
-        "Type": "Visual",
-        "Name": "ConstellationDiagram",
-        "Description": "星座图",
+        "Type": "Converter",
+        "Name": "DataCombiner",
+        "Description": "数据合并器",
         "Properties": {
           "Fixed": {
             "ProcessMode": "block",
             "BlockLength": 1024,
-            "InputCount": 1,
+            "InputCount": 2,
             "OutputCount": 1,
-            "ComponentID": "ConstellationDiagram",
-            "ComponentType": "Visual.ConstellationDiagram"
+            "ComponentID": "DataCombiner",
+            "ComponentType": "Converter.DataCombiner"
           },
           "Global": {
             "SampleRate": 48000,
           },
           "Local": {
-            "bufferLength": 512
+            
           }
         }
       }

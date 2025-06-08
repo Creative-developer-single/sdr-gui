@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import uPlot from 'uplot';
 import 'uplot/dist/uPlot.min.css';
+import { ViewModuleDataTemplate } from '../Provider/ViewModuleDataTemplate';
 
 export default function FrequencySpectrumDiagram({
     freqData,
@@ -22,8 +23,8 @@ export default function FrequencySpectrumDiagram({
         const freqBins = Array.from({ length: fftLength }, (_, i) => i * sampleRate / fftLength);
 
         const options: uPlot.Options = {
-            width: 800,
-            height: 400,
+            width: ViewModuleDataTemplate.ViewModuleGUIProps.width,
+            height: ViewModuleDataTemplate.ViewModuleGUIProps.height,
             scales: {
                 x: { time: false, min: freqBins[0], max: freqBins[freqBins.length - 1] },
                 y: { time: false }

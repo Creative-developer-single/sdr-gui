@@ -1,5 +1,6 @@
-import { createContext, useCallback, useContext, useState } from "react";
-import { LogicGraphNodesProp, LogicGraphProviderInterface, VitrualSingleEdgeProp } from "./LogicGraphProviderInterface";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { LogicGraphDataInterface, LogicGraphNodesProp, LogicGraphProviderInterface, VitrualSingleEdgeProp } from "./LogicGraphProviderInterface";
+import { SimulationProps } from "../../Simulation/SimulationInterface";
 
 // 创建Context对象
 const logicGraphContext = createContext<LogicGraphProviderInterface | null>(null);
@@ -190,8 +191,6 @@ export function LogicGraphProvider( {children} ){
                 }
             };
         });
-        console.log("更新全局参数", key, value);
-        console.log("更新后的节点列表", newNodes);
         setNodes(newNodes);
     }
 
@@ -215,6 +214,32 @@ export function LogicGraphProvider( {children} ){
         setNodes(newNodes);
     }
 
+    // 与仿真模块同步
+    function applySimulationPrarms(params: SimulationProps){
+        // 更新节点的全局参数
+        const newNodes = Nodes.map(node => {
+            return {
+                ...node,
+                NodesData: {
+                    ...node.NodesData,
+                    Properties: {
+                        ...node.NodesData.Properties,
+                        Global: {
+                            ...node.NodesData.Properties.Global,
+                            SampleRate: params.SimulationSampleRate
+                        },
+                        Fixed: {
+                            ...node.NodesData.Properties.Fixed,
+                            BlockLength: Math.floor(params.SimulationSampleRate * params.SimulationPerFrameTime)
+                        }
+                    }
+                }
+            };
+        });
+        setNodes(newNodes);
+    }
+        
+
     function updateNodes(nodes: LogicGraphProviderInterface["Nodes"]){
         setNodes(nodes);
     }
@@ -225,6 +250,24 @@ export function LogicGraphProvider( {children} ){
             Edges: Edges,
             VitrualEdges: VitrualEdges
         }
+    }
+
+    function importLogicGraphData(data: LogicGraphDataInterface){
+        // 导入节点
+        setNodes(data.Nodes);
+        // 导入边
+        setEdges(data.Edges);
+        // 导入虚拟边
+        setVitrualEdges(data.VitrualEdges);
+    }
+
+    // 导出逻辑图数据
+    function exportLogicGraphData(): LogicGraphDataInterface {
+        return {
+            Nodes: Nodes,
+            Edges: Edges,
+            VitrualEdges: VitrualEdges
+        };
     }
 
     const contextValue = {
@@ -245,7 +288,10 @@ export function LogicGraphProvider( {children} ){
             getLogicGraphData: getLogicGraphData,
             updateGlobalProps: updateGlobalProps,
             updateFixedProps: updateFixedProps,
-            updateNodes: updateNodes
+            updateNodes: updateNodes,
+            applySimulationPrarms: applySimulationPrarms,
+            importLogicGraphData: importLogicGraphData,
+            exportLogicGraphData: exportLogicGraphData
         }
     }
 

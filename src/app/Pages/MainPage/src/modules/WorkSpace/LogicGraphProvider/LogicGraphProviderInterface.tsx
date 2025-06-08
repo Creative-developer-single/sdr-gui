@@ -1,4 +1,5 @@
 import { ModulesDataProps } from "../../ModulesEditor/ModulesEditorProviderInterface";
+import { SimulationProps } from "../../Simulation/SimulationInterface";
 import { LogicGraphBackgroundPropsInterface } from "./LogicGraphBackgroundInterface";
 
 interface LogicGraphDynamicProps{
@@ -85,6 +86,13 @@ interface LogicGraphActions{
     updateFixedProps: (key:string,value:any) => void;
     updateNodes:(nodes: LogicGraphNodesProp[]) => void;
     getLogicGraphData: () => LogicGraphDataInterface;
+
+    // 与其他模块同步
+    applySimulationPrarms(params: SimulationProps): void;
+
+    // 输入输出类
+    importLogicGraphData(data:LogicGraphDataInterface): void;
+    exportLogicGraphData: () => LogicGraphDataInterface;
 }
 
 // 编辑器控制属性接口

@@ -7,6 +7,7 @@ import { DataSyncGetNodesDataProps, DataSyncProviderInterface } from "./DataSync
 import { ModulesParseInterface, parseModules } from "../../Tools/DataParse";
 import { createContext, useContext, useEffect } from "react";
 import { ViewModuleProps } from "../../ViewModules/Provider/ViewModuleInterface";
+import { useWebSocket } from "../../WebBridge/WebSocket/WebSocketProvider";
 
 const DataSyncContext = createContext<DataSyncProviderInterface | null>(null);
 
@@ -40,8 +41,26 @@ export function DataSyncProvider( {children} ){
     // 获取可视化模块Context
     const visualContext = useViewModule();
 
+    // 获取WebSocket Context
+    const webSocketContext = useWebSocket();
+
     // 获取节点数据
     const ViewModuleNodes = visualContext.ViewModuleData;
+
+    // 时刻同步逻辑图和仿真器
+    useEffect(()=>{
+        logicGraphContext.Actions.applySimulationPrarms(simulationContext.SimulationProps);
+    },[logicGraphContext.Nodes.length, logicGraphContext.Edges.length]);
+
+    // 时刻同步可视化模块和节点
+    useEffect(()=>{
+        visualContext.Actions.GenerateViewModules();
+    },[logicGraphContext.Nodes.length,logicGraphContext.Edges.length]);
+
+    // 时刻与后端同步仿真状态变化
+    useEffect(()=>{
+        webControllerContext.Actions.RPCModifySimulationStatus(simulationContext.SimulationState.State,webSocketContext);
+    },[simulationContext.SimulationState.State]);
 
     const frameTime = 200; // 每帧时间间隔，单位为毫秒
     // 监听仿真状态变化
@@ -97,6 +116,12 @@ export function DataSyncProvider( {children} ){
             }
         })
 
+        // 如果nodes为空，则直接返回一个空的模块数组
+        if (nodes.length === 0) {
+            console.warn("DataSyncProvider: getViewModuleData: 没有可视化模块节点，返回空数据");
+            return [];
+        }
+
         const testNodes = [{
             ID:4,
             Index:0,
@@ -108,9 +133,10 @@ export function DataSyncProvider( {children} ){
         }
 
         const response = await webControllerContext.Actions.RPCGetNodesData(DataSyncData);
+        //console.log("DataSyncProvider: getViewModuleData response:", response);
         const module = parseModules(response);
         
-        console.log("DataSyncProvider: getViewModuleData response:", module);
+        
         return module;
     }
 

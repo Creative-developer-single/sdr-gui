@@ -10,8 +10,8 @@ export const ViewModuleDataTemplate: ViewModuleProps = {
             Y: 300 // 窗口位置Y
         },
         BindNodeId: 0, // 绑定的节点ID
-        width: 500, // 窗口宽度
-        height: 500, // 窗口高度
+        width: 400, // 窗口宽度
+        height: 200, // 窗口高度
         title: '可视化模块' // 窗口标题
     },
     ViewModuleData:{
@@ -35,6 +35,18 @@ export const ViewModuleTypeComponentDicts:ViewModuleTypeComponentDictsInterface 
     Oscilloscope:{
         DataLength:1024,
         DataChannels:1,
+        Data: [],
+        ActiveChannelNum:0
+    },
+    SpectrumAnalyzer:{
+        DataLength:1024,
+        DataChannels:1,
+        Data: [],
+        ActiveChannelNum:0
+    },
+    ConstellationDiagram:{
+        DataLength:1024,
+        DataChannels:2,
         Data: [],
         ActiveChannelNum:0
     }

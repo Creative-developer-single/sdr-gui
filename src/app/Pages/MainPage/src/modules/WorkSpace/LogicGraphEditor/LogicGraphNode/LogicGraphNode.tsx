@@ -42,7 +42,7 @@ export function LogicGraphShownNode( { groupName,ModuleName,refModuleData } : {
                 OutputPort:Array.from({ length: refModuleData?.Properties.Fixed.OutputCount || moduleGet.Properties.Fixed.OutputCount }, (_, i) => ({PortIndex:i}))
             },
         },
-        NodesData:moduleGet
+        NodesData:refModuleData? refModuleData : moduleGet
     }
 
     return (
@@ -54,13 +54,13 @@ export function LogicGraphShownNode( { groupName,ModuleName,refModuleData } : {
                 <div className="flex-initial basis-1/2 flex flex-row items-center pt-4 pl-6">{/*节点名称的容器*/}
                     <img className="w-[50px] h-[50px] bg-gray-100 p-2 mr-5 rounded-md shadow-md" src={ String(nodeData.GuiProps.IconSrc) }></img>
                     <div className="flex flex-col items-center">
-                        <h3 className="font-semibold">{nodeData?.GuiProps.Title}</h3>
-                        <h4 className="font-medium font-serif text-xs">{nodeData?.GuiProps.Type}</h4>
+                        <h3 className="font-semibold">{ModulesListAlias[nodeData.NodesData.Type][nodeData.NodesData.Name]["Name"]}</h3>
+                        <h4 className="font-medium font-serif text-xs">{ModulesListAlias[nodeData.NodesData.Type]["Name"]}</h4>
                     </div>
                 </div>
                 <div className="flex-initial basis-1/2 flex flex-col bg-gray-200 mx-6 mt-4 px-4 rounded-md shadow-md overflow-auto">
                     {Object.entries(nodeData?.NodesData.Properties.Local || {}).map(([key,value])=> (
-                         <div className="font-medium font-serif text-xs my-1" key={key}>{ModulesListAlias[key]+": "+value}</div>
+                         <div className="font-medium font-serif text-xs my-1" key={key}>{ModulesListAlias[nodeData.NodesData.Type][nodeData.NodesData.Name][key]+": "+value}</div>
                     ))}
                 </div>
             </div>
@@ -160,13 +160,13 @@ export function LogicGraphNode( { nodeID } ){
                         <div className="flex-initial basis-1/2 flex flex-row items-center pt-4 pl-6">{/*节点名称的容器*/}
                             <img className="w-[50px] h-[50px] bg-gray-100 p-2 mr-5 rounded-md shadow-md" src={ String(nodeGUI.iconSrc) }></img>
                             <div className="flex flex-col items-center">
-                                <h3 className="font-semibold">{nodeData?.GuiProps.Title}</h3>
-                                <h4 className="font-medium font-serif text-xs">{nodeData?.GuiProps.Type}</h4>
+                            <h3 className="font-semibold">{ModulesListAlias[nodeData?.NodesData.Type || "Default"][nodeData?.NodesData.Name || "default"]["Name"]}</h3>
+                            <h4 className="font-medium font-serif text-xs">{ModulesListAlias[nodeData?.NodesData.Type || "Default"]["Name"]}</h4>
                             </div>
                         </div>
                         <div className="flex-initial basis-1/2 flex flex-col bg-gray-200 mx-6 mt-4 px-4 rounded-md shadow-md overflow-auto">
                             {Object.entries(nodeData?.NodesData.Properties.Local || {}).map(([key,value])=> (
-                                <div className="font-medium font-serif text-xs my-1" key={key}>{ModulesListAlias[key]+": "+value}</div>
+                                <div className="font-medium font-serif text-xs my-1" key={key}>{ModulesListAlias[nodeData?.NodesData.Type || "Default"][nodeData?.NodesData.Name || "default"][key]+": "+value}</div>
                             ))}
                         </div>
                     </div>

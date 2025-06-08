@@ -22,11 +22,11 @@ export async function ToolBarModifySimulationStatus( context:CollectiveContext){
     // 切换仿真状态
     if (simulationContext.SimulationState.State === "running") {
         simulationContext.Actions.StopSimulation();
-        await webControllerContext.Actions.RPCModifySimulationStatus("Stop",webSocketContext);
+        //await webControllerContext.Actions.RPCModifySimulationStatus("Stop",webSocketContext);
         console.log("停止仿真");
     } else {
         simulationContext.Actions.StartSimulation();
-        await webControllerContext.Actions.RPCModifySimulationStatus("Start",webSocketContext);
+        //await webControllerContext.Actions.RPCModifySimulationStatus("Start",webSocketContext);
         console.log("开始仿真");
     }
 }

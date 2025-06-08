@@ -6,6 +6,7 @@ import { useViewModule } from '../ViewModules/Provider/ViewModuleProvider';
 import { useWebController } from '../WebBridge/WebController/WebController';
 import { useWebSocket } from '../WebBridge/WebSocket/WebSocketProvider';
 import { useLogicGraph } from '../WorkSpace/LogicGraphProvider/LogicGraphProvider';
+import { useProjectManager } from '../WorkSpace/ProjectManager/Provider/ProjectManagerProvider';
 import { toolbarsConfig } from '././ToolBarSelection';
 import { CollectiveContext, ToolBarController } from './Controller/ToolBarController';
 
@@ -42,8 +43,8 @@ function Toolbar({ activeMenuId ,onStart }) {
     // 获取WebSocket 上下文
     const WebSocketContext =  useWebSocket();
 
-    // 获取ViewModules 上下文
-    const ViewModulesContext = useViewModule();
+    // 获取ProjectManager 上下文
+    const ProjectManagerContext = useProjectManager();
 
     // 组装上下文对象，便于Controller访问
     const SharedContext:CollectiveContext = {
@@ -51,9 +52,8 @@ function Toolbar({ activeMenuId ,onStart }) {
         LogicGraph:LogicGraphContext,
         WebController:WebControllerContext,
         Simulation:SimulationContext,
-        DataSyncContext:DataSyncContext,
         WebSocketContext:WebSocketContext,
-        ViewModulesContext:ViewModulesContext,
+        ProjectManager:ProjectManagerContext,
     }
 
     function createTestWindow(){

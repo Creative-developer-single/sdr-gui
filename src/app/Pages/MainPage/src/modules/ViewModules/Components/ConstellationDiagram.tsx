@@ -1,8 +1,9 @@
 import React, { useRef, useEffect } from 'react';
 import uPlot from 'uplot';
 import 'uplot/dist/uPlot.min.css';
+import { ViewModuleDataTemplate } from '../Provider/ViewModuleDataTemplate';
 
-export default function ConstellationDiagram({ iqData }) {
+export default function ConstellationDiagram({ iData,qData }) {
     const chartRef = useRef<HTMLDivElement | null>(null);
     const uplotRef = useRef<uPlot | null>(null);
 
@@ -11,12 +12,12 @@ export default function ConstellationDiagram({ iqData }) {
             uplotRef.current.destroy();
         }
 
-        const x = iqData.map(point => point.i);
-        const y = iqData.map(point => point.q);
+        const x = iData;
+        const y = qData;
 
         const options: uPlot.Options = {
-            width: 500,
-            height: 500,
+            width: ViewModuleDataTemplate.ViewModuleGUIProps.width,
+            height: ViewModuleDataTemplate.ViewModuleGUIProps.height,
             scales: {
                 x: { time: false, min: -2, max: 2 },
                 y: { time: false, min: -2, max: 2 }
@@ -93,7 +94,7 @@ export default function ConstellationDiagram({ iqData }) {
         }
 
         return () => uplotRef.current?.destroy();
-    }, [iqData]);
+    }, [iData, qData]);
 
     return <div ref={chartRef} />;
 }

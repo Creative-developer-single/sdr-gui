@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import uPlot from 'uplot';
 import 'uplot/dist/uPlot.min.css';
+import { ViewModuleDataTemplate } from '../Provider/ViewModuleDataTemplate';
 
 export default function TimeDomainDiagram({ data, sampleRate }: { data: number[], sampleRate: number }) {
     const chartRef = useRef<HTMLDivElement | null>(null);
@@ -15,8 +16,8 @@ export default function TimeDomainDiagram({ data, sampleRate }: { data: number[]
         const x = Array.from({ length: data.length }, (_, i) => i / sampleRate);
 
         const options: uPlot.Options = {
-            width: 500,
-            height: 500,
+            width: ViewModuleDataTemplate.ViewModuleGUIProps.width,
+            height: ViewModuleDataTemplate.ViewModuleGUIProps.height,
             scales: {
                 x: { time: false, min: 0, max: x[x.length - 1] },
                 y: { time: false }

@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useState } from "react";
-import { SimulationActions, SimulationGUIProps, SimulationProps, SimulationProviderInterface, SimulationState, SimulationVerifyResult } from "./SimulationInterface";
+import { SimulationActions, SimulationData, SimulationGUIProps, SimulationProps, SimulationProviderInterface, SimulationState, SimulationVerifyResult } from "./SimulationInterface";
 
 const SimulationContext = createContext<SimulationProviderInterface | null>(null);
 
@@ -114,6 +114,20 @@ export function SimulationProvider( {children} ){
     const VerifySimulation = useCallback(() => {
     }, []);
 
+    function importSimulation(data: SimulationData){
+        setSimulationGUIProps(data.SimulationGUIProps || []);
+        setSimulationProps(data.SimulationProps || defaultSimulationProps);
+    }
+
+    function exportSimulation(): SimulationData {
+        return {
+            SimulationGUIProps: simulationGUIProps,
+            SimulationProps: simulationProps,
+            SimulationState: simulationState,
+            SimulationVerifyResult: simulationVerifyResult? simulationVerifyResult : { IsValid: true, Info: [] }
+        };
+    }
+
     const Actions:SimulationActions = {
         OpenSimulationSettingsGUI: openSimulationSettingsGUI,
         UpdateSimulationSettingsGUIStatus: updateSimulationSettingsGUIStatus,
@@ -123,7 +137,10 @@ export function SimulationProvider( {children} ){
         StopSimulation: StopSimulation,
         UpdateSimulationSettings: UpdateSimulationSettings,
 
-        VerifySimulation: VerifySimulation
+        VerifySimulation: VerifySimulation,
+
+        importSimulation: importSimulation,
+        exportSimulation: exportSimulation
     }
 
     const contextValue:SimulationProviderInterface = {

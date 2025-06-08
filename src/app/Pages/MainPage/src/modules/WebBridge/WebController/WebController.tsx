@@ -42,28 +42,24 @@ export function WebControllerProvider( {children} ){
             }
         }
 
-        console.log("SendString:", JSON.stringify(newRPCFrame));
+        //console.log("SendString:", JSON.stringify(newRPCFrame));
         
         webSocketContext.Actions.SendCommandWithoutReply(newRPCFrame);
         setRPCFrame(newRPCFrame);
     }
 
-    function RPCModifyLogicGraph( logicGraph:LogicGraphDataInterface ){
+    async function RPCModifyLogicGraph( logicGraph:LogicGraphDataInterface ){
         const newRPCFrame:RPCFrameInterface = {
             RPCFrame:{
                 TargetModule: "LogicGraph",
                 Command: "RPCLoadLogicGraph",
-                Args:logicGraph,
+                Args:convertLogicGraphDataToBackgroundData(logicGraph),
                 return: "Null"
             }
         }
         
-        webSocketContext.Actions.SendCommandWithReply(JSON.stringify(logicGraph)).then(
-            (Response => {
-                console.log("RPCModifyLogicGraph Response:", Response);
-                setRPCReturnValue(Response);
-            })
-        )
+        const response = await webSocketContext.Actions.SendCommandWithReply(newRPCFrame);
+        return response.Data;
     }
 
     async function RPCGetNodesData( Nodes:DataSyncGetNodesDataProps){

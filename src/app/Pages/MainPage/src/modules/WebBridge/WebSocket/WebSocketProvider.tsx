@@ -56,7 +56,7 @@ export function WebSocketProvider({ url, children }) {
         }
 
         function processMessage(messageBytes) {
-            console.log("Received WebSocket message:", messageBytes);
+            //console.log("Received WebSocket message:", messageBytes);
 
             if (messageBytes.length < 4) {
                 console.warn("Received message too short:", messageBytes);
@@ -76,7 +76,7 @@ export function WebSocketProvider({ url, children }) {
                     return;
                 }
 
-                console.log("Received CTRL message with ID:", id, parsedMessage);
+                //console.log("Received CTRL message with ID:", id, parsedMessage);
 
                 if (pendingCommands.current.has(id)) {
                     pendingCommands.current.get(id).resolve({

@@ -32,7 +32,7 @@ export default function TestConstellationV2() {
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white p-4">
             <h1 className="text-2xl mb-4">Test: Constellation Diagram (QPSK)</h1>
-            <ConstellationDiagram iqData={iqData} />
+            <ConstellationDiagram iData={iqData.map(item=>item.i)} qData={iqData.map(item=>item.q)} />
         </div>
     );
 }

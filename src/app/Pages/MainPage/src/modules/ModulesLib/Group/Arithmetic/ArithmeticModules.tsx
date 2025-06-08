@@ -65,6 +65,27 @@ export const ArithmeticModules = {
             "OperationMode": "abs"
           }
         }
+      },{
+        "Id":0,
+        "Type":"Arithmetic",
+        "Name": "GainBlock",
+        "Description": "增益块",
+        "Properties": {
+          "Fixed": {
+            "ProcessMode": "block",
+            "BlockLength": 1024,
+            "InputCount": 1,
+            "OutputCount": 1,
+            "ComponentID": "GainBlock",
+            "ComponentType": "Arithmetic.GainBlock"
+          },
+          "Global": {
+            "SampleRate": 48000
+          },
+          "Local": {
+            "GainFactor": 1.0
+          }
+        }
       }
     ]
   }

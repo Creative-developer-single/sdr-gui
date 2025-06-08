@@ -62,6 +62,7 @@ export function ViewModuleProvider({ children }){
     
         if (visualNodes.length === 0) {
             console.warn("没有找到任何可视化节点");
+            setViewModuleList([]);  // 清空列表
             return;
         }
     
@@ -82,8 +83,8 @@ export function ViewModuleProvider({ children }){
                 },
                 BindNodeId: node.ID,
                 type: node.NodesData.Name, // 使用节点名称作为类型
-                width: 500,
-                height: 500,
+                width: ViewModuleDataTemplate.ViewModuleGUIProps.width,
+                height: ViewModuleDataTemplate.ViewModuleGUIProps.height,
                 title: '可视化模块'
             };
 
