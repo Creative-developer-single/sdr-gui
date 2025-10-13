@@ -21,6 +21,9 @@ import { ViewModuleProvider } from './src/modules/ViewModules/Provider/ViewModul
 import { DataSyncProvider } from './src/modules/DataSync/Provider/DataSyncProvider';
 import { ViewModulesGUI } from './src/modules/ViewModules/GUI/ViewModulesGUI';
 import { ProjectManagerProvider } from './src/modules/WorkSpace/ProjectManager/Provider/ProjectManagerProvider';
+import { LLMAssistantProvider } from './src/modules/LLM/Provider/LLMAssistantProvider';
+import { LLMAssistantGUI } from './src/modules/LLM/GUI/LLMAssistantGUI';
+import MainControllerProvider from './src/modules/MainController/MainControllerProvider';
 
 // ## 工作区组件 (Workspace)
 function Workspace() {
@@ -33,53 +36,27 @@ function Workspace() {
     );
 }
 
+const currentMode = "Debug";
 
 // ## 主应用组件 (App)
 function App() {
     const [activeMenuId, setActiveMenuId] = useState('start'); // 默认激活 'start' 菜单
+
+    console.log("界面被刷新了，当前激活的菜单ID:", activeMenuId);
 
     const handleMenuItemClick = (id, label) => {
         setActiveMenuId(id);
         console.log(`菜单 "${label}" 已激活`);
     };
 
-    // 将自定义字体和滚动条样式添加到<head>
-    // 在 React 中，通常这些全局样式会放在 index.css 或通过 Helmet 等库管理 <head>
-    // 这里为了简单起见，使用 useEffect 一次性添加 <style> 标签
-    
-    function onUpdateStatus(data: UpdateStatusInterface) {
-        setUpdateStatusData((prevState) => {
-            return { ...prevState, ...data };
-        });
-    }
-
-    const [isOpen, setIsOpen] = useState(false);
-    const [floatWindowUpdateStatusData, setUpdateStatusData] = useState({
-        id:0,
-        icon:'😊',
-        title:'测试窗口',
-        isOpen: false,
-        width: 400,
-        height: 300,
-        posX: 200,
-        posY: 200,
-        onUpdateStatus: onUpdateStatus,
-        onDestroy: onClose,
-    });
-
-    function onStart(){
-        setUpdateStatusData((prevState) => {
-            return { ...prevState, isOpen: true };
-        });
-    }
-
-    function onClose(){
-        setIsOpen(false);
-    }
+    // ws://localhost:9000/
+    // ws://192.168.137.54:9000/
+    const defaultURL = "ws://localhost:9000/"; // 默认WebSocket URL
+    const testURL = "ws://172.21.233.19:9000/"; // 测试WebSocket URL
 
     return (
         <div className="bg-gray-100 h-screen flex flex-col overflow-hidden">
-            <WebSocketProvider url={"ws://172.27.234.221:9000/"}>
+            <WebSocketProvider url={currentMode === "Debug" ? testURL : defaultURL}>
                 <WebControllerProvider>
                     <SimulationProvider>
                         <LogicGraphProvider>
@@ -87,18 +64,23 @@ function App() {
                                 <ViewModuleProvider>
                                     <DataSyncProvider>
                                         <ProjectManagerProvider>
-                                        <MenuBar activeItem={activeMenuId} onItemClick={handleMenuItemClick} />
-                                            <Toolbar onStart={onStart} activeMenuId={activeMenuId} />
-                                            <ModuleBrouserEditor></ModuleBrouserEditor>
-                                            <ModulesEditor></ModulesEditor>
-                                            <SimulationSettingsGUI></SimulationSettingsGUI>
-                                            <SimulationStatusBar></SimulationStatusBar>
-                                        <div className="flex flex-grow overflow-hidden">
-                                            <Sidebar />
-                                            <LogicGraphGUI></LogicGraphGUI>
-                                            <ViewModulesGUI></ViewModulesGUI>
-                                            {/*<TestConstellationV2></TestConstellationV2>*/}
-                                        </div>
+                                                <LLMAssistantProvider>
+                                                <MainControllerProvider>
+                                                <MenuBar activeItem={activeMenuId} onItemClick={handleMenuItemClick} />
+                                                <Toolbar activeMenuId={activeMenuId} />
+                                                <ModuleBrouserEditor></ModuleBrouserEditor>
+                                                <ModulesEditor></ModulesEditor>
+                                                <SimulationSettingsGUI></SimulationSettingsGUI>
+                                                <SimulationStatusBar></SimulationStatusBar>
+                                                <LLMAssistantGUI></LLMAssistantGUI>
+                                            <div className="flex flex-grow overflow-hidden">
+                                                <Sidebar />
+                                                <LogicGraphGUI></LogicGraphGUI>
+                                                <ViewModulesGUI></ViewModulesGUI>
+                                                {/*<TestConstellationV2></TestConstellationV2>*/}
+                                            </div>
+                                            </MainControllerProvider>
+                                            </LLMAssistantProvider>
                                         </ProjectManagerProvider>
                                     </DataSyncProvider>
                                 </ViewModuleProvider>

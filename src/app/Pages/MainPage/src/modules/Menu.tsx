@@ -4,6 +4,7 @@ export const menuItemsConfig = [
     { id: 'start', label: '开始' },
     { id: 'modules', label: '模块' },
     { id: 'simulate', label: '仿真' },
+    { id: 'aiAssistant', label: 'AI助手' },
     { id: 'hardware', label: '硬件' },
     { id: 'help', label: '帮助' },
 ];

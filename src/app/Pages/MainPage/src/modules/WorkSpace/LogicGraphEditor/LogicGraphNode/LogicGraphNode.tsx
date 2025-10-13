@@ -9,6 +9,7 @@ import { useModulesEditor } from "../../../ModulesEditor/ModulesEditorProvider";
 import { useSimulation } from "../../../Simulation/SimulationProvider";
 import { useViewModule } from "../../../ViewModules/Provider/ViewModuleProvider";
 import { useDataSync } from "../../../DataSync/Provider/DataSyncProvider";
+import { ModulesIconList } from "../../../ModulesLib/ModulesIconList";
 
 // 该节点仅用于展示，无任何交互逻辑
 export function LogicGraphShownNode( { groupName,ModuleName,refModuleData } : {
@@ -30,7 +31,7 @@ export function LogicGraphShownNode( { groupName,ModuleName,refModuleData } : {
     const nodeData:LogicGraphNodesProp = {
         ID:0,
         GuiProps:{
-            IconSrc:'../imgs/alu.png',
+            IconSrc:ModulesIconList[moduleGet.Name] || '../imgs/alu.png',
             Title:moduleGet.Name,
             Type:modules?.GroupName || '未知组',
             Pos:{

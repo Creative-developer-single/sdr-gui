@@ -1,4 +1,29 @@
-export const toolbarsConfig = {
+export interface ToolBarSelectionItem{
+    id: string;
+    label: string;
+    iconSrc: string;
+    iconSrcActive?: string; // 可选属性，用于激活状态的图标
+    action: () => void;
+}
+
+export interface ToolBarSelectionItemGroup{
+    id: string;
+    label: string;
+    type?: string; // 可选属性，用于标识类型
+    item: ToolBarSelectionItem[];
+}
+
+export interface ToolBarSelectionGroup{
+    file: ToolBarSelectionItemGroup[];
+    start: ToolBarSelectionItemGroup[];
+    modules: ToolBarSelectionItemGroup[];
+    simulate: ToolBarSelectionItemGroup[];
+    hardware: ToolBarSelectionItemGroup[];
+    aiAssistant: ToolBarSelectionItemGroup[];
+    help: ToolBarSelectionItemGroup[];
+}
+
+export const toolbarsConfig:ToolBarSelectionGroup = {
     file: [
         {
             item:[
@@ -7,7 +32,7 @@ export const toolbarsConfig = {
                 { id: 'SaveProject', label: '保存工程', iconSrc: '../imgs/quickSave.png', action: () => console.log('保存工程 Clicked') },
             ],
             id:'fileManagement',
-            label:'工程管理',
+            label:'工程管理'
         }
 
     ],
@@ -63,9 +88,9 @@ export const toolbarsConfig = {
         },
         {
             item:[
-                { id: 'BasicALU', label:'基础运算',iconSrc:'../imgs/alu.png',action: ()=> console.log('基础运算器 Clicked') },
-                { id: 'Calculus', label:'微积分',iconSrc:'../imgs/calculus.png',action: ()=> console.log('基础运算器 Clicked') },
-                { id: 'NonLinear', label:'非线性',iconSrc:'../imgs/nonLinear.png',action: ()=> console.log('基础运算器 Clicked') },
+                { id: 'Arithmetic', label:'基础运算',iconSrc:'../imgs/alu.png',action: ()=> console.log('基础运算器 Clicked') },
+                { id: 'Arithmetic', label:'微积分',iconSrc:'../imgs/calculus.png',action: ()=> console.log('基础运算器 Clicked') },
+                { id: 'Arithmetic', label:'非线性',iconSrc:'../imgs/nonLinear.png',action: ()=> console.log('基础运算器 Clicked') },
             ],
             id:'Calculator',
             label:'计算器',
@@ -73,9 +98,9 @@ export const toolbarsConfig = {
         },
         {
             item:[
-                { id: 'freqTrans', label:'频率变换',iconSrc:'../imgs/freqTrans.png',action: ()=> console.log('基础运算器 Clicked') },
-                { id: 'pll', label:'反馈环路',iconSrc:'../imgs/pll.png',action: ()=> console.log('基础运算器 Clicked') },
-                { id: 'more', label:'更多',iconSrc:'../imgs/more.png',action: ()=> console.log('基础运算器 Clicked') },
+                { id: 'Others', label:'频率变换',iconSrc:'../imgs/freqTrans.png',action: ()=> console.log('基础运算器 Clicked') },
+                { id: 'RF', label:'反馈环路',iconSrc:'../imgs/pll.png',action: ()=> console.log('基础运算器 Clicked') },
+                { id: 'Others', label:'更多',iconSrc:'../imgs/more.png',action: ()=> console.log('基础运算器 Clicked') },
             ],
             id:'RF',
             label:'射频',
@@ -83,8 +108,8 @@ export const toolbarsConfig = {
         },
         {
             item:[
-                { id: 'modulator', label:'调制器',iconSrc:'../imgs/modulator.png',action: ()=> console.log('基础运算器 Clicked') },
-                { id: 'demodulator', label:'解调器',iconSrc:'../imgs/deModulator.png',action: ()=> console.log('基础运算器 Clicked') },
+                { id: 'Modulation', label:'调制器',iconSrc:'../imgs/modulator.png',action: ()=> console.log('基础运算器 Clicked') },
+                { id: 'DeModulation', label:'解调器',iconSrc:'../imgs/deModulator.png',action: ()=> console.log('基础运算器 Clicked') },
             ],
             id:'modulator',
             label:'调制解调',
@@ -145,7 +170,7 @@ export const toolbarsConfig = {
             label:'在线控制'
         }
     ],
-    aiAssiant:[
+    aiAssistant:[
         {
             item:[
                 { id: 'aiCorrect', label: 'AI纠错', iconSrc: '../imgs/aiCorrect.png', action: () => console.log('检测硬件 Clicked') },

@@ -1,0 +1,146 @@
+知识库：智能SDR实验平台工程模版
+说明：本文件是智能SDR实验平台的工程模版，包含了基本的配置和结构，可以根据本文件的格式来创建新的实验项目。
+# 智能SDR实验平台工程模版
+
+{
+  "LogicGraph": {
+    "Nodes": [
+      {
+        "ID": 1,
+        "GuiProps": {
+          "Title": "SignalGenerator",
+          "IconSrc": "../imgs/alu.png",
+          "Type": "SendSource",
+          "Pos": {
+            "X": 118.7371826171875,
+            "Y": 93.17527770996094
+          },
+          "Ports": {
+            "InputPort": [
+              {
+                "PortIndex": 0
+              }
+            ],
+            "OutputPort": [
+              {
+                "PortIndex": 0
+              }
+            ]
+          }
+        },
+        "NodesData": {
+          "Id": 0,
+          "Type": "SendSource",
+          "Name": "SignalGenerator",
+          "Description": "多波形发生器",
+          "Properties": {
+            "Fixed": {
+              "ProcessMode": "block",
+              "BlockLength": 1000,
+              "InputCount": 1,
+              "OutputCount": 1,
+              "ComponentID": "Sin1",
+              "ComponentType": "Source.SignalGenerator"
+            },
+            "Global": {
+              "SampleRate": "10000"
+            },
+            "Local": {
+              "signalType": "Sine",
+              "frequency": 1000,
+              "amplitude": 1,
+              "blockPhase": 0
+            }
+          }
+        }
+      },
+      {
+        "ID": 2,
+        "GuiProps": {
+          "Title": "Oscilloscope",
+          "IconSrc": "../imgs/alu.png",
+          "Type": "Visual",
+          "Pos": {
+            "X": 484.8946271623884,
+            "Y": 94.61785452706474
+          },
+          "Ports": {
+            "InputPort": [
+              {
+                "PortIndex": 0
+              }
+            ],
+            "OutputPort": [
+              {
+                "PortIndex": 0
+              }
+            ]
+          }
+        },
+        "NodesData": {
+          "Id": 0,
+          "Type": "Visual",
+          "Name": "Oscilloscope",
+          "Description": "示波器",
+          "Properties": {
+            "Fixed": {
+              "ProcessMode": "block",
+              "BlockLength": 1000,
+              "InputCount": 1,
+              "OutputCount": 1,
+              "ComponentID": "Sin1",
+              "ComponentType": "Visual.Oscilloscope"
+            },
+            "Global": {
+              "SampleRate": "10000"
+            },
+            "Local": {
+              "bufferLength": 512,
+              "DataType": "Real"
+            }
+          }
+        }
+      }
+    ],
+    "Edges": [
+      {
+        "EdgeID": 1,
+        "StartNodeID": 1,
+        "EndNodeID": 2,
+        "StartEdgeIndex": 0,
+        "EndEdgeIndex": 0
+      }
+    ],
+    "VitrualEdges": {
+      "StartNode": {
+        "isNodeSet": false,
+        "NodeID": 0,
+        "EdgeIndex": 0
+      },
+      "EndNode": {
+        "isNodeSet": false,
+        "NodeID": 0,
+        "EdgeIndex": 0
+      },
+      "Mode": "StartPoint"
+    }
+  },
+  "Simulation": {
+    "SimulationGUIProps": [],
+    "SimulationProps": {
+      "SimulationMode": "Static",
+      "SimulationTime": 5,
+      "SimulationTimeStep": "0.1",
+      "SimulationSampleRate": "10000",
+      "SimulationPerFrameTime": 0.1
+    },
+    "SimulationState": {
+      "State": "stopped",
+      "Time": 0
+    },
+    "SimulationVerifyResult": {
+      "IsValid": true,
+      "Info": []
+    }
+  }
+}

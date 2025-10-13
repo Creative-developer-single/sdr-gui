@@ -13,6 +13,8 @@ import { ConverterModules } from "./Group/Converter/ConverterModules"
 import { ShapeFilterModules } from "./Group/ShapeFilter/ShapeFilterModules"
 import { AFCModules } from "./Group/AFC/AFCModules"
 import { OthersModules } from "./Group/Others/OthersModules"
+import { ModulationModules } from "./Group/Modulation/ModulationModules"
+import { DeModulationModules } from "./Group/DeModulation/DeModulationModules"
 
 //分类 -> 模块名
 export const ModulesList = [
@@ -25,7 +27,9 @@ export const ModulesList = [
     { GroupName: 'RF',Modules:RFModules.Modules}, // 射频模块目前没有
     { GroupName: 'ShapeFilter',Modules:ShapeFilterModules.Modules},
     { GroupName: 'Converter',Modules:ConverterModules.Modules},
-    { GroupName: 'AFC',Modules:AFCModules.Modules}
+    { GroupName: 'AFC',Modules:AFCModules.Modules},
+    { GroupName: 'Modulation',Modules:ModulationModules.Modules},
+    { GroupName: 'DeModulation',Modules:DeModulationModules.Modules}
 
 ]
 export const ModulesListAlias = {
@@ -128,6 +132,13 @@ export const ModulesListAlias = {
             Name:'射频锁相环',
             CenterFrequency:'中心频率',
             DesiredLockedFrequency:'期望锁定频率'
+        },
+        VCOComponent:{
+            Name:'压控振荡器',
+            CenterFrequency:'中心频率',
+            SampleRate:'采样率',
+            Sensitivity:'灵敏度',
+            Phase:'相位'
         }
     },
     ShapeFilter:{
@@ -165,6 +176,38 @@ export const ModulesListAlias = {
         },
         DataCombiner:{
             Name:'数据合并器',
+        }
+    },
+    Modulation:{
+        Name:'调制器',
+        AMModulator:{
+            Name:'AM调制器',
+            CarrierFrequency:'载波频率',
+            ModulationIndex:'调制指数'
+        },
+        DSBSCModulator:{
+            Name:'DSBSC调制器',
+            CarrierFrequency:'载波频率',
+            PilotPower:'导频功率'
+        },
+        FMModulator:{
+            Name:'FM调制器',
+            CarrierFrequency:'载波频率',
+            FMModulationParams:'调频参数'
+        }
+    },
+    DeModulation:{
+        Name:'解调器',
+        AMDemodulator:{
+            Name:'AM解调器',
+            CarrierFrequency:'载波频率',
+            CutoffFrequency:'截止频率'
+        },
+        DSBDeModulator:{
+            Name:'DSB解调器',
+            LpfCutOffFrequency:'低通滤波器截止频率',
+            LpfWindowLength:'低通滤波器窗口长度',
+            LpfWindowType:'低通滤波器窗口类型'
         }
     },
     Others:{

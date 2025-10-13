@@ -48,7 +48,7 @@ function ModulesEditorItem( { item, actions } : { item: ModulesData, actions: Mo
     }
 
     const windowData = {
-        icon:'😊',
+        icon: '🚀',
         id:item.GuiProps.id,
         title:'模块浏览器',
         isOpen:item.GuiProps.isOpen,
@@ -81,7 +81,7 @@ function ModuleBrouserEditorItem( { item,actions } : { item:ModulesData , action
     }
 
     const windowData = {
-        icon:'😊',
+        icon:'🚀',
         id:item.GuiProps.id,
         title:'模块浏览器',
         isOpen:item.GuiProps.isOpen,

@@ -1,4 +1,5 @@
 import { DataSyncProviderInterface } from "../../DataSync/Provider/DataSyncInterface";
+import { LLMProviderInterface } from "../../LLM/Provider/LLMAssistantInterface";
 import { ModulesEditorActions, ModulesEditorProviderInterface } from "../../ModulesEditor/ModulesEditorProviderInterface";
 import { SimulationProviderInterface } from "../../Simulation/SimulationInterface";
 import { ViewModuleProviderInterface } from "../../ViewModules/Provider/ViewModuleInterface";
@@ -14,8 +15,8 @@ export interface CollectiveContext {
     LogicGraph: LogicGraphProviderInterface,
     Simulation: SimulationProviderInterface,
     WebController: WebControllerInterface,
-    WebSocketContext:WebSocketInterface,
-    ProjectManager: ProjectManagerInterface
+    ProjectManager: ProjectManagerInterface,
+    LLMContext:LLMProviderInterface
 }
 
 
@@ -58,6 +59,20 @@ function ToolBarSimulationManager( item,context:CollectiveContext ){
     }
 }
 
+export function ToolBarLLMManager(itemID,item,context:CollectiveContext){
+    switch (item.id) {
+        case "aiCorrect":
+            // AI纠错
+            context.LLMContext.Actions.OpenLLMGUI();
+            console.log("打开AI纠错GUI");
+            break;
+        default:
+            console.warn(`未处理的AI助手项: ${item.id}`);
+            break;
+    }
+
+}
+
 export async function ToolBarController( itemID,item,SharedContext:CollectiveContext){
     switch (itemID){
         case "file":
@@ -72,6 +87,9 @@ export async function ToolBarController( itemID,item,SharedContext:CollectiveCon
             break;
         case "simulate":
             ToolBarSimulationManager(item,SharedContext);
+            break;
+        case "aiAssistant":
+            ToolBarLLMManager(itemID,item,SharedContext);
             break;
         default:
             console.warn(`未处理的工具栏项: ${itemID}`);

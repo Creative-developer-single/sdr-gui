@@ -40,7 +40,7 @@ export const ArithmeticModules = {
             "SampleRate": 48000
           },
           "Local": {
-            "OperationMode": "Integral"
+            "OperationMode": "Inte"
           }
         }
       },

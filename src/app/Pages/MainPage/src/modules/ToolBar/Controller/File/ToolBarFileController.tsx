@@ -1,6 +1,6 @@
 import { CollectiveContext } from "../ToolBarController";
 
-function OpenProjectFile( filename:string,context:CollectiveContext){
+function OpenProjectFile(context:CollectiveContext){
      // 1️⃣ 动态创建 input 元素
      const input = document.createElement('input');
      input.type = 'file';
@@ -43,7 +43,7 @@ export function ToolBarFileManager( item,context:CollectiveContext )
             context.LogicGraph.Actions.openLogicGraph();
             break;
         case "OpenProject":
-            OpenProjectFile(item.label, context);
+            OpenProjectFile(context);
             break;
         case "SaveProject":
             context.ProjectManager.Actions.exportProject(item.label);

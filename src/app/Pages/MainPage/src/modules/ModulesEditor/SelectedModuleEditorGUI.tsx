@@ -7,6 +7,7 @@ import { useLogicGraph } from "../WorkSpace/LogicGraphProvider/LogicGraphProvide
 import { LogicGraphNodesProp } from "../WorkSpace/LogicGraphProvider/LogicGraphProviderInterface";
 import { LogicGraphShownNode } from "../WorkSpace/LogicGraphEditor/LogicGraphNode/LogicGraphNode";
 import { smartParse } from "../Tools/SmartParse";
+import { ModulesIconList } from "../ModulesLib/ModulesIconList";
 
 function SelectedModuleEditorGUIMain({ windowId, currentNode }: { windowId: number; currentNode?: LogicGraphNodesProp }) {
     const { modulesData, actions } = useModulesEditor();
@@ -183,7 +184,7 @@ function SelectedModuleEditorGUIMain({ windowId, currentNode }: { windowId: numb
                                     const newNode: LogicGraphNodesProp = {
                                         ID: currentBindData?.ID || 0,
                                         GuiProps: {
-                                            IconSrc: '../imgs/alu.png',
+                                            IconSrc: ModulesIconList[newModuleData.Name] || '../imgs/alu.png',
                                             Title: newModuleData.Type,
                                             Type: newModuleData.Name,
                                             Pos: {
