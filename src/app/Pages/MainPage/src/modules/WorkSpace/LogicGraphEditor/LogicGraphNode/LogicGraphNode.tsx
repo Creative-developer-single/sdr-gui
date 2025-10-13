@@ -31,7 +31,7 @@ export function LogicGraphShownNode( { groupName,ModuleName,refModuleData } : {
     const nodeData:LogicGraphNodesProp = {
         ID:0,
         GuiProps:{
-            IconSrc:ModulesIconList[moduleGet.Name] || '../imgs/alu.png',
+            Id:moduleGet.Name || 'default',
             Title:moduleGet.Name,
             Type:modules?.GroupName || '未知组',
             Pos:{
@@ -53,7 +53,7 @@ export function LogicGraphShownNode( { groupName,ModuleName,refModuleData } : {
             <LogicGraphNodeInputPorts nodeData={ nodeData } ></LogicGraphNodeInputPorts>
             <div className="w-full h-full flex flex-col pb-3">{/*节点最上层容器*/}
                 <div className="flex-initial basis-1/2 flex flex-row items-center pt-4 pl-6">{/*节点名称的容器*/}
-                    <img className="w-[50px] h-[50px] bg-gray-100 p-2 mr-5 rounded-md shadow-md" src={ String(nodeData.GuiProps.IconSrc) }></img>
+                    <img className="w-[50px] h-[50px] bg-gray-100 p-2 mr-5 rounded-md shadow-md" src={ String(ModulesIconList[nodeData.GuiProps.Id]) }></img>
                     <div className="flex flex-col items-center">
                         <h3 className="font-semibold">{ModulesListAlias[nodeData.NodesData.Type][nodeData.NodesData.Name]["Name"]}</h3>
                         <h4 className="font-medium font-serif text-xs">{ModulesListAlias[nodeData.NodesData.Type]["Name"]}</h4>
@@ -96,7 +96,7 @@ export function LogicGraphNode( { nodeID } ){
 
     const nodeGUI = {
         title:nodeData?.GuiProps.Title || '未命名节点',
-        iconSrc: nodeData?.GuiProps.IconSrc || 'default-icon.png',
+        iconSrc: ModulesIconList[nodeData?.GuiProps.Id || 'default'],
     }
 
     function onUpdateStatus(data: UpdateStatusInterface)
@@ -104,7 +104,7 @@ export function LogicGraphNode( { nodeID } ){
         Actions.updateNode(nodeID,{
             GuiProps:{
                 Title: nodeData?.GuiProps.Title || '未命名节点',
-                IconSrc: nodeData?.GuiProps.IconSrc || 'default-icon.png',
+                Id: nodeData?.GuiProps.Id|| 'default',
                 Type: nodeData?.GuiProps.Type || '未知类型',
                 Pos:{
                     X: data.posX || nodeData?.GuiProps.Pos.X || 0,

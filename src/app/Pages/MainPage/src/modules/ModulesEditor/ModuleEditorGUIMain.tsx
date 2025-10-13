@@ -266,7 +266,7 @@ function ModuleEditorGUIMain({ windowId }) {
                                     const newNode: LogicGraphNodesProp = {
                                         ID: 0,
                                         GuiProps: {
-                                            IconSrc: ModulesIconList[currentModule.Name] || '../imgs/alu.png',
+                                            Id: currentModule.Name || 'default',
                                             Title: currentModule.Name,
                                             Type: currentModule.Type,
                                             Pos: { X: 0, Y: 0 },

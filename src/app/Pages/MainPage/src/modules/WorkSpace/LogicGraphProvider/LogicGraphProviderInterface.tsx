@@ -39,7 +39,7 @@ export interface LogicGraphNodePortProps{
 export interface LogicGraphNodesProp{
     ID: number;
     GuiProps:{
-        IconSrc:string;
+        Id:string;
         Title:string;
         Type:string;
         Pos:{
@@ -166,7 +166,7 @@ export function convertBackgroundDataToLogicGraphData(data: LogicGraphBackground
     const nodes: LogicGraphNodesProp[] = data.Nodes.map(node => ({
         ID: node.ID,
         GuiProps: {
-            IconSrc: "", // 未来可以根据ComponentID映射到图标
+            Id: "default", // 未来可以根据ComponentID映射到图标
             Title: node.ComponentID, // 未来可以根据ComponentID映射到标题
             Type: node.ComponentType,
             Pos: node.Pos,
